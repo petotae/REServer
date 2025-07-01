@@ -10,9 +10,9 @@
     <packaging>jar</packaging>
 
     <properties>
-        <!-- compile and target Java 21 -->
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <!-- compile and target Java 17 to match your Corretto-17 runtime -->
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <openapi.version>6.0.0-SNAPSHOT</openapi.version>
     </properties>
@@ -38,21 +38,28 @@
             <artifactId>postgresql</artifactId>
             <version>42.6.1</version>
         </dependency>
+
+        <!-- JSON serialization/deserialization -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.15.0</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Compile with Java 21 -->
+            <!-- Compile for Java 17 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.10.1</version>
                 <configuration>
-                    <release>21</release>
+                    <release>17</release>
                 </configuration>
             </plugin>
 
-            <!-- Create a single “uber-jar” including all dependencies -->
+            <!-- Bundle all dependencies into a single “uber-jar” -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -64,12 +71,11 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <!-- Keep your original POM intact -->
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <transformers>
-                                <!-- Ensure the manifest points to your Main class -->
+                                <!-- Point the manifest at your main class -->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>neu.cs.doc.Mains</mainClass>
+                                    <mainClass>app.REServer</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
