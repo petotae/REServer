@@ -1,12 +1,13 @@
 package sales;
 
-import io.javalin.Javalin;
-import io.javalin.http.Context;
+import java.sql.SQLException;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.List;
-import java.util.Optional;
-import java.sql.SQLException;
+
+import io.javalin.Javalin;
+import io.javalin.http.Context;
 
 public class SalesController {
 
@@ -17,7 +18,7 @@ public class SalesController {
         app.post("/createSale", this::createSale);
         app.get("/sales/{id}", this::getSaleByID);
         app.get("/sales", this::getAllSales);
-        app.put("/sales/{postCode}", this::findSaleByPostCode);
+        app.get("/sales/postcode/{postCode}", this::findSaleByPostCode);
     }
 
     // implements POST /sales
@@ -62,8 +63,8 @@ public class SalesController {
     // implements GET /sales/{saleID}
     public void getSaleByID(Context ctx) {
         try {
-            String id = ctx.pathParam("id");
-            Optional<HomeSale> sale = salesdao.getSaleById(id);
+            int id = Integer.parseInt(ctx.pathParam("id"));
+            HomeSale sale = salesdao.getSaleById(id);
             if (sale != null) {
                 ctx.json(sale);
             } else {
@@ -79,7 +80,7 @@ public class SalesController {
     // Implements GET /sales/postcode/{postcodeID}
     public void findSaleByPostCode(Context ctx) {
         try {
-            String postCode = ctx.pathParam("postCode");
+            int postCode = Integer.parseInt(ctx.pathParam("postCode"));
             List<HomeSale> sales = salesdao.getSalesByPostCode(postCode);
             if (sales.isEmpty()) {
                 ctx.result("No sales for postcode found");

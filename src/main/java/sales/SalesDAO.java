@@ -8,92 +8,114 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class SalesDAO {
 
-    // List to hold test data
     private static final String JDBC_URL = "jdbc:postgresql://aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?sslmode=require";
     private static final String JDBC_USER = "postgres.jnghzszlarsaxxhiavcv";
     private static final String JDBC_PASSWORD = "iangortoncsw4530";
 
     public boolean newSale(HomeSale homeSale) throws SQLException {
-        String sql = "INSERT INTO nsw_property_data (saleID, postcode, salePrice) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO nsw_property_data (property_id, download_date, council_name, purchase_price, address, post_code, property_type, strata_lot_number, property_name, area, area_type, contract_date, settlement_date, zoning, nature_of_property, primary_purpose, legal_description) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, homeSale.getID());
-            stmt.setString(2, homeSale.getPostCode());
-            stmt.setString(3, homeSale.getSalePrice());
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, homeSale.getProperty_id());
+            stmt.setString(2, homeSale.getDownload_date());
+            stmt.setString(3, homeSale.getCouncil_name());
+            stmt.setLong(4, homeSale.getPurchase_price());
+            stmt.setString(5, homeSale.getAddress());
+            stmt.setLong(6, homeSale.getPost_code());
+            stmt.setString(7, homeSale.getProperty_type());
+            stmt.setString(8, homeSale.getStrata_lot_number());
+            stmt.setString(9, homeSale.getProperty_name());
+            stmt.setDouble(10, homeSale.getArea());
+            stmt.setString(11, homeSale.getArea_type());
+            stmt.setString(12, homeSale.getContract_date());
+            stmt.setString(13, homeSale.getSettlement_date());
+            stmt.setString(14, homeSale.getZoning());
+            stmt.setString(15, homeSale.getNature_of_property());
+            stmt.setString(16, homeSale.getPrimary_purpose());
+            stmt.setString(17, homeSale.getLegal_description());
+
             stmt.executeUpdate();
             return true;
         }
     }
 
-    // returns Optional wrapping a HomeSale if id is found, empty Optional otherwise
-    public Optional<HomeSale> getSaleById(String saleID) throws SQLException {
+    public HomeSale getSaleById(long saleID) throws SQLException {
         String sql = "SELECT * FROM nsw_property_data WHERE property_id = ?";
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, saleID);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, saleID);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                HomeSale sale = new HomeSale(
-                        rs.getString("property_id"),
-                        rs.getString("post_code"),
-                        rs.getString("settlement_date"));
-                return Optional.of(sale);
+                return extractHomeSaleFromResultSet(rs);
             }
         }
-        return Optional.empty();
+        return null;
     }
 
-    // returns a List of homesales in a given postCode
-    public List<HomeSale> getSalesByPostCode(String postCode) throws SQLException {
-        String sql = "SELECT * FROM homesales WHERE postcode = ?";
+    public List<HomeSale> getSalesByPostCode(int postCode) throws SQLException {
+        String sql = "SELECT * FROM nsw_property_data WHERE post_code = ?";
         List<HomeSale> sales = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, postCode);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, postCode);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                sales.add(new HomeSale(
-                        rs.getString("saleID"),
-                        rs.getString("postcode"),
-                        rs.getString("salePrice")));
+                sales.add(extractHomeSaleFromResultSet(rs));
             }
         }
         return sales;
     }
 
-    // returns the individual prices for all sales. Potentially large
-    public List<String> getAllSalePrices() throws SQLException {
-        String sql = "SELECT salePrice FROM homesales";
-        List<String> prices = new ArrayList<>();
+    public List<Long> getAllSalePrices() throws SQLException {
+        String sql = "SELECT purchase_price FROM nsw_property_data";
+        List<Long> prices = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                prices.add(rs.getString("salePrice"));
+                prices.add(rs.getLong("purchase_price"));
             }
         }
         return prices;
     }
 
-    // returns all home sales. Potentially large
     public List<HomeSale> getAllSales() throws SQLException {
-        String sql = "SELECT * FROM homesales";
+        String sql = "SELECT * FROM nsw_property_data";
         List<HomeSale> sales = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                sales.add(new HomeSale(
-                        rs.getString("saleID"),
-                        rs.getString("postcode"),
-                        rs.getString("salePrice")));
+                sales.add(extractHomeSaleFromResultSet(rs));
             }
         }
         return sales;
     }
 
+    private HomeSale extractHomeSaleFromResultSet(ResultSet rs) throws SQLException {
+        return new HomeSale(
+            rs.getLong("property_id"),
+            rs.getString("download_date"),
+            rs.getString("council_name"),
+            rs.getLong("purchase_price"),
+            rs.getString("address"),
+            rs.getLong("post_code"),
+            rs.getString("property_type"),
+            rs.getString("strata_lot_number"),
+            rs.getString("property_name"),
+            rs.getDouble("area"),
+            rs.getString("area_type"),
+            rs.getString("contract_date"),
+            rs.getString("settlement_date"),
+            rs.getString("zoning"),
+            rs.getString("nature_of_property"),
+            rs.getString("primary_purpose"),
+            rs.getString("legal_description")
+        );
+    }
 }
