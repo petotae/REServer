@@ -13,14 +13,15 @@ import java.util.Optional;
 public class SalesDAO {
 
     // List to hold test data
-    private static final String JDBC_URL = "jdbc:postgresql://db.jnghzszlarsaxxhiavcv.supabase.co:5432/postgres";
+    private static final String JDBC_URL = "jdbc:postgresql://db.jnghzszlarsaxxhiavcv.supabase.co:5432/postgres"
+            + "?sslmode=require&ssl=true";
     private static final String JDBC_USER = "postgres";
     private static final String JDBC_PASSWORD = "iangortoncsw4530";
 
     public boolean newSale(HomeSale homeSale) throws SQLException {
         String sql = "INSERT INTO homesales (saleID, postcode, salePrice) VALUES (?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, homeSale.getID());
             stmt.setString(2, homeSale.getPostCode());
             stmt.setString(3, homeSale.getSalePrice());
@@ -33,35 +34,33 @@ public class SalesDAO {
     public Optional<HomeSale> getSaleById(String saleID) throws SQLException {
         String sql = "SELECT * FROM homesales WHERE saleID = ?";
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, saleID);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 HomeSale sale = new HomeSale(
                         rs.getString("saleID"),
                         rs.getString("postcode"),
-                        rs.getString("salePrice")
-                );
+                        rs.getString("salePrice"));
                 return Optional.of(sale);
             }
         }
         return Optional.empty();
     }
 
-    // returns a List of homesales  in a given postCode
+    // returns a List of homesales in a given postCode
     public List<HomeSale> getSalesByPostCode(String postCode) throws SQLException {
         String sql = "SELECT * FROM homesales WHERE postcode = ?";
         List<HomeSale> sales = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, postCode);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 sales.add(new HomeSale(
                         rs.getString("saleID"),
                         rs.getString("postcode"),
-                        rs.getString("salePrice")
-                ));
+                        rs.getString("salePrice")));
             }
         }
         return sales;
@@ -72,8 +71,8 @@ public class SalesDAO {
         String sql = "SELECT salePrice FROM homesales";
         List<String> prices = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 prices.add(rs.getString("salePrice"));
             }
@@ -86,14 +85,13 @@ public class SalesDAO {
         String sql = "SELECT * FROM homesales";
         List<HomeSale> sales = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 sales.add(new HomeSale(
                         rs.getString("saleID"),
                         rs.getString("postcode"),
-                        rs.getString("salePrice")
-                ));
+                        rs.getString("salePrice")));
             }
         }
         return sales;
