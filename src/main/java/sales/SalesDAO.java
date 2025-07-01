@@ -13,13 +13,12 @@ import java.util.Optional;
 public class SalesDAO {
 
     // List to hold test data
-    private static final String JDBC_URL = "jdbc:postgresql://db.jnghzszlarsaxxhiavcv.supabase.co:5432/postgres"
-            + "?sslmode=require&ssl=true";
-    private static final String JDBC_USER = "postgres";
+    private static final String JDBC_URL = "jdbc:postgresql://aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?sslmode=require";
+    private static final String JDBC_USER = "postgres.jnghzszlarsaxxhiavcv";
     private static final String JDBC_PASSWORD = "iangortoncsw4530";
 
     public boolean newSale(HomeSale homeSale) throws SQLException {
-        String sql = "INSERT INTO homesales (saleID, postcode, salePrice) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO nsw_property_data (saleID, postcode, salePrice) VALUES (?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, homeSale.getID());
@@ -32,16 +31,16 @@ public class SalesDAO {
 
     // returns Optional wrapping a HomeSale if id is found, empty Optional otherwise
     public Optional<HomeSale> getSaleById(String saleID) throws SQLException {
-        String sql = "SELECT * FROM homesales WHERE saleID = ?";
+        String sql = "SELECT * FROM nsw_property_data WHERE property_id = ?";
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, saleID);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 HomeSale sale = new HomeSale(
-                        rs.getString("saleID"),
-                        rs.getString("postcode"),
-                        rs.getString("salePrice"));
+                        rs.getString("property_id"),
+                        rs.getString("post_code"),
+                        rs.getString("settlement_date"));
                 return Optional.of(sale);
             }
         }
