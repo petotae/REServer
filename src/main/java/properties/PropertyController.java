@@ -17,7 +17,6 @@ public class PropertyController {
         app.get("/getProperties/{param}/{paramval}", this::findPropertyByParam);
     }
 
-    // implements POST /sales
     public void createProperty(Context ctx) {
         try {
             // Extract HomeSale from request body

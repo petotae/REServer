@@ -26,9 +26,6 @@ public class Property {
     public Property() {
     }
 
-    /**
-     * All-args constructor requiring every field.
-     */
     public Property(
             Long propertyId,
             String downloadDate,
@@ -66,7 +63,6 @@ public class Property {
         this.legalDescription = Objects.requireNonNull(legalDescription, "legalDescription is required");
     }
 
-    // Typed getters and setters
     public Long getPropertyId() {
         return propertyId;
     }

@@ -47,11 +47,9 @@ public class PropertyDAO {
     }
 
     public List<Property> getPropertiesByField(String param, Object paramVal) throws SQLException {
-        // 1) Validate & map incoming param to one of our enum fields
         PropertyDataField field = PropertyDataField.valueOf(param.toUpperCase());
         String column = field.name().toLowerCase();
 
-        // 2) Build safe SQL
         String sql = "SELECT * FROM nsw_property_data WHERE " + column + " = ?";
 
         List<Property> results = new ArrayList<>();
@@ -70,7 +68,6 @@ public class PropertyDAO {
             }
 
             try (ResultSet rs = stmt.executeQuery()) {
-                // 4) Loop over every matching row
                 while (rs.next()) {
                     Property p = new Property(
                             rs.getLong("property_id"),
