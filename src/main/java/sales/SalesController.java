@@ -14,10 +14,10 @@ public class SalesController {
     private final SalesDAO salesdao = new SalesDAO();
 
     public void registerRoutes(Javalin app) {
-        app.post("/courses", this::createSale);
-        app.get("/courses/{id}", this::getSaleByID);
-        app.get("/courses", this::getAllSales);
-        app.put("/courses/{postCode}", this::findSaleByPostCode);
+        app.post("/sales", this::createSale);
+        app.get("/sales/{id}", this::getSaleByID);
+        app.get("/sales", this::getAllSales);
+        app.put("/sales/{postCode}", this::findSaleByPostCode);
     }
 
     // implements POST /sales
