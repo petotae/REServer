@@ -94,4 +94,38 @@ public class PropertyDAO {
 
         return results;
     }
+
+    public List<Property> getAllProperties() throws SQLException {
+        String sql = "SELECT * FROM nsw_property_data";
+        List<Property> results = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Property p = new Property(
+                        rs.getLong("property_id"),
+                        rs.getString("download_date"),
+                        rs.getString("council_name"),
+                        rs.getLong("purchase_price"),
+                        rs.getString("address"),
+                        rs.getLong("post_code"),
+                        rs.getString("property_type"),
+                        rs.getString("strata_lot_number"),
+                        rs.getString("property_name"),
+                        rs.getDouble("area"),
+                        rs.getString("area_type"),
+                        rs.getString("contract_date"),
+                        rs.getString("settlement_date"),
+                        rs.getString("zoning"),
+                        rs.getString("nature_of_property"),
+                        rs.getString("primary_purpose"),
+                        rs.getString("legal_description"));
+                results.add(p);
+            }
+        }
+
+        return results;
+    }
 }

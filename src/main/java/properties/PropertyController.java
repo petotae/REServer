@@ -15,6 +15,7 @@ public class PropertyController {
     public void registerRoutes(Javalin app) {
         app.post("/createProperty", this::createProperty);
         app.get("/getProperties/{param}/{paramval}", this::findPropertyByParam);
+        app.get("/getAllProperties", this::getAllProperties);
     }
 
     public void createProperty(Context ctx) {
@@ -57,6 +58,24 @@ public class PropertyController {
             ctx.status(500);
         }
 
+    }
+
+    public void getAllProperties(Context ctx) {
+        try {
+            List<Property> properties = propertydao.getAllProperties();
+
+            if (properties.isEmpty()) {
+                ctx.result("No properties found");
+                ctx.status(404);
+            } else {
+                ctx.json(properties);
+                ctx.status(200);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ctx.result("Database error: " + e.getMessage());
+            ctx.status(500);
+        }
     }
 
 }
