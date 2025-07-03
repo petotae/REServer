@@ -16,6 +16,7 @@ public class PropertyController {
         app.post("/createProperty", this::createProperty);
         app.get("/getProperties/{param}/{paramval}", this::findPropertyByParam);
         app.get("/getAllProperties", this::getAllProperties);
+        app.get("/getPropertiesByParams", this::getPropertiesByParams);
     }
 
     public void createProperty(Context ctx) {
@@ -23,7 +24,7 @@ public class PropertyController {
             // Extract HomeSale from request body
             Property prop = ctx.bodyValidator(Property.class).get();
             // store new sale in database
-            boolean success = propertydao.newProperty(prop);
+            boolean success = propertydao.createProp(prop);
             if (success) {
                 ctx.result("Property Created");
                 ctx.status(201);
@@ -43,7 +44,7 @@ public class PropertyController {
             String param = ctx.pathParam("param");
             String paramval = ctx.pathParam("paramval");
 
-            List<Property> properties = propertydao.getPropertiesByField(param, paramval);
+            List<Property> properties = propertydao.getPropByParam(param, paramval);
 
             if (properties.isEmpty()) {
                 ctx.result("No properties for " + param + " with {" + paramval + "} found");
@@ -62,10 +63,31 @@ public class PropertyController {
 
     public void getAllProperties(Context ctx) {
         try {
-            List<Property> properties = propertydao.getAllProperties();
+            List<Property> properties = propertydao.getAllProps();
 
             if (properties.isEmpty()) {
                 ctx.result("No properties found");
+                ctx.status(404);
+            } else {
+                ctx.json(properties);
+                ctx.status(200);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ctx.result("Database error: " + e.getMessage());
+            ctx.status(500);
+        }
+    }
+
+    public void getPropertiesByParams(Context ctx) {
+        try {
+            // { "property_id": ["0"], "property_cost": ["10000"] }
+            var paramsMap = ctx.queryParamMap();
+
+            List<Property> properties = propertydao.getPropByParams(paramsMap);
+
+            if (properties.isEmpty()) {
+                ctx.result("No properties with given query vals found");
                 ctx.status(404);
             } else {
                 ctx.json(properties);
