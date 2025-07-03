@@ -44,23 +44,23 @@ public class Property {
             String natureOfProperty,
             String primaryPurpose,
             String legalDescription) {
-        this.propertyId = Objects.requireNonNull(propertyId, "propertyId is required");
-        this.downloadDate = Objects.requireNonNull(downloadDate, "downloadDate is required");
-        this.councilName = Objects.requireNonNull(councilName, "councilName is required");
-        this.purchasePrice = Objects.requireNonNull(purchasePrice, "purchasePrice is required");
-        this.address = Objects.requireNonNull(address, "address is required");
-        this.postCode = Objects.requireNonNull(postCode, "postCode is required");
-        this.propertyType = Objects.requireNonNull(propertyType, "propertyType is required");
-        this.strataLotNumber = Objects.requireNonNull(strataLotNumber, "strataLotNumber is required");
-        this.propertyName = Objects.requireNonNull(propertyName, "propertyName is required");
-        this.area = Objects.requireNonNull(area, "area is required");
-        this.areaType = Objects.requireNonNull(areaType, "areaType is required");
-        this.contractDate = Objects.requireNonNull(contractDate, "contractDate is required");
-        this.settlementDate = Objects.requireNonNull(settlementDate, "settlementDate is required");
-        this.zoning = Objects.requireNonNull(zoning, "zoning is required");
-        this.natureOfProperty = Objects.requireNonNull(natureOfProperty, "natureOfProperty is required");
-        this.primaryPurpose = Objects.requireNonNull(primaryPurpose, "primaryPurpose is required");
-        this.legalDescription = Objects.requireNonNull(legalDescription, "legalDescription is required");
+        this.propertyId = propertyId == null ? 0 : propertyId;
+        this.downloadDate = downloadDate == null ? "null" : downloadDate;
+        this.councilName = councilName == null ? "null" : councilName;
+        this.purchasePrice = purchasePrice == null ? 0 : purchasePrice;
+        this.address = address == null ? "null" : address;
+        this.postCode = postCode == null ? 0 : postCode;
+        this.propertyType = propertyType == null ? "null" : propertyType;
+        this.strataLotNumber = strataLotNumber == null ? "null" : strataLotNumber;
+        this.propertyName = propertyName == null ? "null" : propertyName;
+        this.area = area == null ? 0 : area;
+        this.areaType = areaType == null ? "null" : areaType;
+        this.contractDate = contractDate == null ? "null" : contractDate;
+        this.settlementDate = settlementDate == null ? "null" : settlementDate;
+        this.zoning = zoning == null ? "null" : zoning;
+        this.natureOfProperty = natureOfProperty == null ? "null" : natureOfProperty;
+        this.primaryPurpose = primaryPurpose == null ? "null" : primaryPurpose;
+        this.legalDescription = legalDescription == null ? "null" : legalDescription;
     }
 
     public Long getPropertyId() {
