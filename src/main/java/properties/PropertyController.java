@@ -4,6 +4,9 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.sql.SQLException;
 
@@ -17,6 +20,7 @@ public class PropertyController {
         app.get("/getProperties/{param}/{paramVal}", this::findPropertyByParam);
         app.get("/getAllProperties", this::getAllProperties);
         app.get("/getPropertiesGreaterThan/{param}/{paramVal}", this::findPropertiesGreaterThan);
+        app.get("/getPropertiesLessThan/{param}/{paramVal}", this::findPropertiesLessThan);
     }
 
     public void createProperty(Context ctx) {
@@ -80,12 +84,27 @@ public class PropertyController {
     }
 
     public void findPropertiesGreaterThan(Context ctx) {
+        findPropertiesGreaterThanLessThan(ctx, true);
+    }
+
+    public void findPropertiesLessThan(Context ctx) {
+        findPropertiesGreaterThanLessThan(ctx, false);
+    }
+
+    private void findPropertiesGreaterThanLessThan(Context ctx, Boolean isGreaterThan) {
         try {
             String param = ctx.pathParam("param");
             String paramVal = ctx.pathParam("paramVal");
 
-            List<Property> properties = propertydao.getPropertiesGreaterThan(param, paramVal);
-            
+            List<String> acceptedParams = Arrays.asList(
+                new String[]{"property_id", "download_date", "contract_date", "purchase_price", 
+                             "post_code", "settlement_date", "area"});
+
+            List<Property> properties = new ArrayList<>();
+            if (acceptedParams.contains(param)) {
+                properties = propertydao.getPropertiesGreaterThanLessThan(param, paramVal, isGreaterThan);
+            } 
+
             if (properties.isEmpty()) {
                 ctx.result("No properties for " + param + " greater than {" + paramVal + "} found");
                 ctx.status(404);

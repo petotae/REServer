@@ -45,7 +45,7 @@ public class Property {
             String primaryPurpose,
             String legalDescription) {
         this.propertyId = Objects.requireNonNull(propertyId, "propertyId is required");
-        this.downloadDate = Objects.requireNonNull(downloadDate, "downloadDate is required");
+        this.downloadDate = downloadDate.equals(null) ? "null" : downloadDate;
         this.councilName = Objects.requireNonNull(councilName, "councilName is required");
         this.purchasePrice = Objects.requireNonNull(purchasePrice, "purchasePrice is required");
         this.address = Objects.requireNonNull(address, "address is required");

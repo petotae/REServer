@@ -59,11 +59,11 @@ public class PropertyDAO {
         return this.getPropertiesFromDatabase("SELECT * FROM nsw_property_data", null, null);
     }
 
-    public List<Property> getPropertiesGreaterThan(String param, Object paramVal) throws SQLException {
+    public List<Property> getPropertiesGreaterThanLessThan(String param, Object paramVal, Boolean isGreaterThan) throws SQLException {
         PropertyDataField field = PropertyDataField.valueOf(param.toUpperCase());
         String column = field.name().toLowerCase();
 
-        String sql = "SELECT * FROM nsw_property_data WHERE " + column + " > ?";
+        String sql = String.format("SELECT * FROM nsw_property_data WHERE %s %s ?", column, isGreaterThan ? ">" : "<");
 
         return this.getPropertiesFromDatabase(sql, field, paramVal);
     }
