@@ -13,8 +13,9 @@ public class PropertyDAO {
     private static final String JDBC_USER = "postgres.jnghzszlarsaxxhiavcv";
     private static final String JDBC_PASSWORD = "iangortoncsw4530";
     private static final String LIMIT_RECORDS = " LIMIT 100"; // Only show first 100 properties matching query
-    private static final List<String> LONG_ATTRIBUTES = Arrays.asList( new String[] {"property_id", "purchase_price", "post_code"});
-    private static final List<String> DOUBLE_ATTRIBUTES = Arrays.asList( new String[] {"area"});
+    private static final List<String> LONG_ATTRIBUTES = Arrays
+            .asList(new String[] { "property_id", "purchase_price", "post_code" });
+    private static final List<String> DOUBLE_ATTRIBUTES = Arrays.asList(new String[] { "area" });
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -60,7 +61,8 @@ public class PropertyDAO {
         return this.getPropertiesFromDatabase("SELECT * FROM nsw_property_data", null, null);
     }
 
-    public List<Property> getPropertiesGreaterThanLessThan(String param, Object paramVal, Boolean isGreaterThan) throws SQLException {
+    public List<Property> getPropertiesGreaterThanLessThan(String param, Object paramVal, Boolean isGreaterThan)
+            throws SQLException {
         PropertyDataField field = PropertyDataField.valueOf(param.toUpperCase());
         String column = field.name().toLowerCase();
         String sql = String.format("SELECT * FROM nsw_property_data WHERE %s %s ?", column, isGreaterThan ? ">" : "<");
@@ -79,13 +81,38 @@ public class PropertyDAO {
                     long longVal = Long.parseLong(paramVal.toString());
                     stmt.setLong(1, longVal);
                 } else if (DOUBLE_ATTRIBUTES.contains(column)) {
-                    // parse the incoming String (e.g. "12.34") to double 
+                    // parse the incoming String (e.g. "12.34") to double
                     Double doubleVal = Double.parseDouble(paramVal.toString());
                     stmt.setDouble(1, doubleVal);
                 } else {
                     stmt.setString(1, paramVal.toString());
                 }
             }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Property p = new Property(
+                        rs.getLong("property_id"),
+                        rs.getString("download_date"),
+                        rs.getString("council_name"),
+                        rs.getLong("purchase_price"),
+                        rs.getString("address"),
+                        rs.getLong("post_code"),
+                        rs.getString("property_type"),
+                        rs.getString("strata_lot_number"),
+                        rs.getString("property_name"),
+                        rs.getDouble("area"),
+                        rs.getString("area_type"),
+                        rs.getString("contract_date"),
+                        rs.getString("settlement_date"),
+                        rs.getString("zoning"),
+                        rs.getString("nature_of_property"),
+                        rs.getString("primary_purpose"),
+                        rs.getString("legal_description"));
+                results.add(p);
+            }
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
         }
         return results;
     }
