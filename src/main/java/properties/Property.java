@@ -44,23 +44,23 @@ public class Property {
             String natureOfProperty,
             String primaryPurpose,
             String legalDescription) {
-        this.propertyId = propertyId == null ? 0 : propertyId;
-        this.downloadDate = downloadDate == null ? "null" : downloadDate;
-        this.councilName = councilName == null ? "null" : councilName;
-        this.purchasePrice = purchasePrice == null ? 0 : purchasePrice;
-        this.address = address == null ? "null" : address;
-        this.postCode = postCode == null ? 0 : postCode;
-        this.propertyType = propertyType == null ? "null" : propertyType;
-        this.strataLotNumber = strataLotNumber == null ? "null" : strataLotNumber;
-        this.propertyName = propertyName == null ? "null" : propertyName;
-        this.area = area == null ? 0 : area;
-        this.areaType = areaType == null ? "null" : areaType;
-        this.contractDate = contractDate == null ? "null" : contractDate;
-        this.settlementDate = settlementDate == null ? "null" : settlementDate;
-        this.zoning = zoning == null ? "null" : zoning;
-        this.natureOfProperty = natureOfProperty == null ? "null" : natureOfProperty;
-        this.primaryPurpose = primaryPurpose == null ? "null" : primaryPurpose;
-        this.legalDescription = legalDescription == null ? "null" : legalDescription;
+        this.propertyId = this.longOrNull(propertyId);
+        this.downloadDate = this.stringOrNull(downloadDate);
+        this.councilName = this.stringOrNull(councilName);
+        this.purchasePrice = this.longOrNull(purchasePrice);
+        this.address = this.stringOrNull(address);
+        this.postCode = this.longOrNull(postCode);
+        this.propertyType = this.stringOrNull(propertyType);
+        this.strataLotNumber = this.stringOrNull(strataLotNumber);
+        this.propertyName = this.stringOrNull(propertyName);
+        this.area = this.doubleOrNull(area);
+        this.areaType = this.stringOrNull(areaType);
+        this.contractDate = this.stringOrNull(contractDate);
+        this.settlementDate = this.stringOrNull(settlementDate);
+        this.zoning = this.stringOrNull(zoning);
+        this.natureOfProperty = this.stringOrNull(natureOfProperty);
+        this.primaryPurpose = this.stringOrNull(primaryPurpose);
+        this.legalDescription = this.stringOrNull(legalDescription);
     }
 
     public Long getPropertyId() {
@@ -68,7 +68,7 @@ public class Property {
     }
 
     public void setPropertyId(Long propertyId) {
-        this.propertyId = Objects.requireNonNull(propertyId, "propertyId is required");
+        this.propertyId = this.longOrNull(propertyId);
     }
 
     public String getDownloadDate() {
@@ -76,7 +76,7 @@ public class Property {
     }
 
     public void setDownloadDate(String downloadDate) {
-        this.downloadDate = Objects.requireNonNull(downloadDate, "downloadDate is required");
+        this.downloadDate = this.stringOrNull(downloadDate);
     }
 
     public String getCouncilName() {
@@ -84,7 +84,7 @@ public class Property {
     }
 
     public void setCouncilName(String councilName) {
-        this.councilName = Objects.requireNonNull(councilName, "councilName is required");
+        this.councilName = this.stringOrNull(councilName);
     }
 
     public Long getPurchasePrice() {
@@ -92,7 +92,7 @@ public class Property {
     }
 
     public void setPurchasePrice(Long purchasePrice) {
-        this.purchasePrice = Objects.requireNonNull(purchasePrice, "purchasePrice is required");
+        this.purchasePrice = this.longOrNull(purchasePrice);
     }
 
     public String getAddress() {
@@ -100,7 +100,7 @@ public class Property {
     }
 
     public void setAddress(String address) {
-        this.address = Objects.requireNonNull(address, "address is required");
+        this.address = this.stringOrNull(address);
     }
 
     public Long getPostCode() {
@@ -108,7 +108,7 @@ public class Property {
     }
 
     public void setPostCode(Long postCode) {
-        this.postCode = Objects.requireNonNull(postCode, "postCode is required");
+        this.postCode = this.longOrNull(postCode);
     }
 
     public String getPropertyType() {
@@ -116,7 +116,7 @@ public class Property {
     }
 
     public void setPropertyType(String propertyType) {
-        this.propertyType = Objects.requireNonNull(propertyType, "propertyType is required");
+        this.propertyType = this.stringOrNull(propertyType);
     }
 
     public String getStrataLotNumber() {
@@ -124,7 +124,7 @@ public class Property {
     }
 
     public void setStrataLotNumber(String strataLotNumber) {
-        this.strataLotNumber = Objects.requireNonNull(strataLotNumber, "strataLotNumber is required");
+        this.strataLotNumber = this.stringOrNull(strataLotNumber);
     }
 
     public String getPropertyName() {
@@ -132,7 +132,7 @@ public class Property {
     }
 
     public void setPropertyName(String propertyName) {
-        this.propertyName = Objects.requireNonNull(propertyName, "propertyName is required");
+        this.propertyName = this.stringOrNull(propertyName);
     }
 
     public Double getArea() {
@@ -140,7 +140,7 @@ public class Property {
     }
 
     public void setArea(Double area) {
-        this.area = Objects.requireNonNull(area, "area is required");
+        this.area = this.doubleOrNull(area);
     }
 
     public String getAreaType() {
@@ -148,7 +148,7 @@ public class Property {
     }
 
     public void setAreaType(String areaType) {
-        this.areaType = Objects.requireNonNull(areaType, "areaType is required");
+        this.areaType = this.stringOrNull(areaType);
     }
 
     public String getContractDate() {
@@ -156,7 +156,7 @@ public class Property {
     }
 
     public void setContractDate(String contractDate) {
-        this.contractDate = Objects.requireNonNull(contractDate, "contractDate is required");
+        this.contractDate = this.stringOrNull(contractDate);
     }
 
     public String getSettlementDate() {
@@ -164,7 +164,7 @@ public class Property {
     }
 
     public void setSettlementDate(String settlementDate) {
-        this.settlementDate = Objects.requireNonNull(settlementDate, "settlementDate is required");
+        this.settlementDate = this.stringOrNull(settlementDate);
     }
 
     public String getZoning() {
@@ -172,7 +172,7 @@ public class Property {
     }
 
     public void setZoning(String zoning) {
-        this.zoning = Objects.requireNonNull(zoning, "zoning is required");
+        this.zoning = this.stringOrNull(zoning);
     }
 
     public String getNatureOfProperty() {
@@ -180,7 +180,7 @@ public class Property {
     }
 
     public void setNatureOfProperty(String natureOfProperty) {
-        this.natureOfProperty = Objects.requireNonNull(natureOfProperty, "natureOfProperty is required");
+        this.natureOfProperty = this.stringOrNull(natureOfProperty);
     }
 
     public String getPrimaryPurpose() {
@@ -188,7 +188,7 @@ public class Property {
     }
 
     public void setPrimaryPurpose(String primaryPurpose) {
-        this.primaryPurpose = Objects.requireNonNull(primaryPurpose, "primaryPurpose is required");
+        this.primaryPurpose = this.stringOrNull(primaryPurpose);
     }
 
     public String getLegalDescription() {
@@ -196,26 +196,38 @@ public class Property {
     }
 
     public void setLegalDescription(String legalDescription) {
-        this.legalDescription = Objects.requireNonNull(legalDescription, "legalDescription is required");
+        this.legalDescription = this.stringOrNull(legalDescription);
     }
 
-    public Object get(String property) {
-        try {
-            PropertyDescriptor pd = new PropertyDescriptor(property, this.getClass());
-            return pd.getReadMethod().invoke(this);
-        } catch (IntrospectionException | ReflectiveOperationException e) {
-            throw new IllegalArgumentException(
-                    "Unable to get property '" + property + "'", e);
-        }
+    // public Object get(String property) {
+    //     try {
+    //         PropertyDescriptor pd = new PropertyDescriptor(property, this.getClass());
+    //         return pd.getReadMethod().invoke(this);
+    //     } catch (IntrospectionException | ReflectiveOperationException e) {
+    //         throw new IllegalArgumentException(
+    //                 "Unable to get property '" + property + "'", e);
+    //     }
+    // }
+
+    // public void set(String property, Object value) {
+    //     try {
+    //         PropertyDescriptor pd = new PropertyDescriptor(property, this.getClass());
+    //         pd.getWriteMethod().invoke(this, value);
+    //     } catch (IntrospectionException | ReflectiveOperationException e) {
+    //         throw new IllegalArgumentException(
+    //                 "Unable to set property '" + property + "' to " + value, e);
+    //     }
+    // }
+
+    private String stringOrNull(String s) {
+        return s == null ? "null" : s;
     }
 
-    public void set(String property, Object value) {
-        try {
-            PropertyDescriptor pd = new PropertyDescriptor(property, this.getClass());
-            pd.getWriteMethod().invoke(this, value);
-        } catch (IntrospectionException | ReflectiveOperationException e) {
-            throw new IllegalArgumentException(
-                    "Unable to set property '" + property + "' to " + value, e);
-        }
+    private Long longOrNull(Long l) {
+        return l == null ? 0 : l;
+    }
+
+    private Double doubleOrNull(Double d) {
+        return d == null ? 0 : d;
     }
 }
