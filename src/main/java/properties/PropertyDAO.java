@@ -18,7 +18,7 @@ public class PropertyDAO {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public boolean newProperty(Property property) throws SQLException {
+    public boolean createProp(Property property) throws SQLException {
         Map<String, Object> props = MAPPER.convertValue(
                 property,
                 new TypeReference<Map<String, Object>>() {
@@ -49,7 +49,7 @@ public class PropertyDAO {
         }
     }
 
-    public List<Property> getPropertiesByField(String param, Object paramVal) throws SQLException {
+    public List<Property> getPropByParam(String param, Object paramVal) throws SQLException {
         PropertyDataField field = PropertyDataField.valueOf(param.toUpperCase());
         String column = field.name().toLowerCase();
         String sql = "SELECT * FROM nsw_property_data WHERE " + column + " = ?";
@@ -86,8 +86,18 @@ public class PropertyDAO {
                     stmt.setString(1, paramVal.toString());
                 }
             }
+        }
+        return results;
+    }
 
-            ResultSet rs = stmt.executeQuery();
+    public List<Property> getAllProps() throws SQLException {
+        String sql = "SELECT * FROM nsw_property_data";
+        List<Property> results = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+
             while (rs.next()) {
                 Property p = new Property(
                         rs.getLong("property_id"),
@@ -114,5 +124,95 @@ public class PropertyDAO {
         }
 
         return results;
+    }
+
+    public List<Property> getPropByParams(Map<String, List<String>> filters) throws SQLException {
+        String sql = "SELECT * FROM nsw_property_data";
+        List<Object> paramVals = new ArrayList<>();
+        List<String> paramKeys = new ArrayList<>();
+
+        if (!filters.isEmpty()) {
+            sql += " WHERE ";
+            int keyIndex = 0;
+            int numKeys = filters.size();
+
+            for (Map.Entry<String, List<String>> entry : filters.entrySet()) {
+                String key = entry.getKey();
+                List<String> values = entry.getValue();
+
+                String statement;
+
+                if (values.size() == 1) {
+                    statement = key + " = ?";
+                    paramVals.add(values.get(0));
+                    paramKeys.add(key);
+                } else {
+                    statement = key + " IN (";
+                    for (int i = 0; i < values.size(); i++) {
+                        statement += "?";
+                        paramVals.add(values.get(i));
+                        paramKeys.add(key);
+                        if (i != values.size() - 1) {
+                            statement += ",";
+                        }
+                    }
+                    statement += ")";
+                }
+                sql += statement;
+
+                if (++keyIndex < numKeys) {
+                    sql += " AND ";
+                }
+            }
+        }
+
+        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            // Fill in ? parameters with correct types
+            for (int i = 0; i < paramVals.size(); i++) {
+                String field = paramKeys.get(i).toLowerCase();
+                Object paramVal = paramVals.get(i);
+
+                switch (field) {
+                    case "property_id":
+                    case "purchase_price":
+                    case "post_code":
+                        stmt.setLong(i + 1, Long.parseLong(paramVal.toString()));
+                        break;
+                    case "area":
+                        stmt.setDouble(i + 1, Double.parseDouble(paramVal.toString()));
+                        break;
+                    default:
+                        stmt.setString(i + 1, paramVal.toString());
+                }
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                List<Property> results = new ArrayList<>();
+                while (rs.next()) {
+                    Property p = new Property(
+                            rs.getLong("property_id"),
+                            rs.getString("download_date"),
+                            rs.getString("council_name"),
+                            rs.getLong("purchase_price"),
+                            rs.getString("address"),
+                            rs.getLong("post_code"),
+                            rs.getString("property_type"),
+                            rs.getString("strata_lot_number"),
+                            rs.getString("property_name"),
+                            rs.getDouble("area"),
+                            rs.getString("area_type"),
+                            rs.getString("contract_date"),
+                            rs.getString("settlement_date"),
+                            rs.getString("zoning"),
+                            rs.getString("nature_of_property"),
+                            rs.getString("primary_purpose"),
+                            rs.getString("legal_description"));
+                    results.add(p);
+                }
+                return results;
+            }
+        }
     }
 }

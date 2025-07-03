@@ -19,6 +19,7 @@ public class PropertyController {
         app.post("/createProperty", this::createProperty);
         app.get("/getProperties/{param}/{paramVal}", this::findPropertyByParam);
         app.get("/getAllProperties", this::getAllProperties);
+        app.get("/getPropertiesByParams", this::getPropertiesByParams);
         app.get("/getPropertiesGreaterThan/{param}/{paramVal}", this::findPropertiesGreaterThan);
         app.get("/getPropertiesLessThan/{param}/{paramVal}", this::findPropertiesLessThan);
     }
@@ -28,7 +29,7 @@ public class PropertyController {
             // Extract HomeSale from request body
             Property prop = ctx.bodyValidator(Property.class).get();
             // store new sale in database
-            boolean success = propertydao.newProperty(prop);
+            boolean success = propertydao.createProp(prop);
             if (success) {
                 ctx.result("Property Created");
                 ctx.status(201);
@@ -44,22 +45,39 @@ public class PropertyController {
     public void findPropertyByParam(Context ctx) {
         try {
             String param = ctx.pathParam("param");
-            String paramVal = ctx.pathParam("paramVal");
+            String paramval = ctx.pathParam("paramval");
 
-            List<Property> properties = propertydao.getPropertiesByField(param, paramVal);
-            this.addResponseToContext(ctx, properties, "No properties for " + param + " with {" + paramVal + "} found");
+            List<Property> properties = propertydao.getPropByParam(param, paramval);
+
+            if (properties.isEmpty()) {
+                ctx.result("No properties for " + param + " with {" + paramval + "} found");
+                ctx.status(404);
+            } else {
+                ctx.json(properties);
+                ctx.status(200);
+            }
         } catch (SQLException e) {
-            handleError(e, ctx);
+            e.printStackTrace();
+            ctx.result("Database error: " + e.getMessage());
+            ctx.status(500);
         }
-
     }
 
     public void getAllProperties(Context ctx) {
         try {
-            List<Property> properties = propertydao.getAllProperties();
-            this.addResponseToContext(ctx, properties, "No properties found");
+            List<Property> properties = propertydao.getAllProps();
+
+            if (properties.isEmpty()) {
+                ctx.result("No properties found");
+                ctx.status(404);
+            } else {
+                ctx.json(properties);
+                ctx.status(200);
+            }
         } catch (SQLException e) {
-            handleError(e, ctx);
+            e.printStackTrace();
+            ctx.result("Database error: " + e.getMessage());
+            ctx.status(500);
         }
     }
 
@@ -87,6 +105,27 @@ public class PropertyController {
             this.addResponseToContext(ctx, properties, "No properties for " + param + " greater than {" + paramVal + "} found");
         } catch (SQLException e) {
             handleError(e, ctx);
+        }
+    }
+
+    public void getPropertiesByParams(Context ctx) {
+        try {
+            // { "property_id": ["0"], "property_cost": ["10000"] }
+            var paramsMap = ctx.queryParamMap();
+
+            List<Property> properties = propertydao.getPropByParams(paramsMap);
+
+            if (properties.isEmpty()) {
+                ctx.result("No properties with given query vals found");
+                ctx.status(404);
+            } else {
+                ctx.json(properties);
+                ctx.status(200);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ctx.result("Database error: " + e.getMessage());
+            ctx.status(500);
         }
     }
 
