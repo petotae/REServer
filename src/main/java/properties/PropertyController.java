@@ -14,8 +14,9 @@ public class PropertyController {
 
     public void registerRoutes(Javalin app) {
         app.post("/createProperty", this::createProperty);
-        app.get("/getProperties/{param}/{paramval}", this::findPropertyByParam);
+        app.get("/getProperties/{param}/{paramVal}", this::findPropertyByParam);
         app.get("/getAllProperties", this::getAllProperties);
+        app.get("/getPropertiesGreaterThan/{param}/{paramVal}", this::findPropertiesGreaterThan);
     }
 
     public void createProperty(Context ctx) {
@@ -41,12 +42,12 @@ public class PropertyController {
     public void findPropertyByParam(Context ctx) {
         try {
             String param = ctx.pathParam("param");
-            String paramval = ctx.pathParam("paramval");
+            String paramVal = ctx.pathParam("paramVal");
 
-            List<Property> properties = propertydao.getPropertiesByField(param, paramval);
+            List<Property> properties = propertydao.getPropertiesByField(param, paramVal);
 
             if (properties.isEmpty()) {
-                ctx.result("No properties for " + param + " with {" + paramval + "} found");
+                ctx.result("No properties for " + param + " with {" + paramVal + "} found");
                 ctx.status(404);
             } else {
                 ctx.json(properties);
@@ -78,4 +79,24 @@ public class PropertyController {
         }
     }
 
+    public void findPropertiesGreaterThan(Context ctx) {
+        try {
+            String param = ctx.pathParam("param");
+            String paramVal = ctx.pathParam("paramVal");
+
+            List<Property> properties = propertydao.getPropertiesGreaterThan(param, paramVal);
+            
+            if (properties.isEmpty()) {
+                ctx.result("No properties for " + param + " greater than {" + paramVal + "} found");
+                ctx.status(404);
+            } else {
+                ctx.json(properties);
+                ctx.status(200);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ctx.result("Database error: " + e.getMessage());
+            ctx.status(500);
+        }
+    }
 }
