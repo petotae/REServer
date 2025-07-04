@@ -14,7 +14,7 @@ public class SalesController {
     public final Logger log = LoggerFactory.getLogger(SalesController.class);
     private final SalesDAO salesdao = new SalesDAO();
 
-    public void registerRoutes(Javalin app) {
+    public void registerRoutes(final Javalin app) {
         app.post("/createSale", this::createSale);
         app.get("/sales/{id}", this::getSaleByID);
         app.get("/sales", this::getAllSales);
@@ -25,9 +25,9 @@ public class SalesController {
     public void createSale(final Context ctx) {
         try {
             // Extract HomeSale from request body
-            HomeSale sale = ctx.bodyValidator(HomeSale.class).get();
+            final HomeSale sale = ctx.bodyValidator(HomeSale.class).get();
             // store new sale in database
-            boolean success = salesdao.newSale(sale);
+            final boolean success = salesdao.newSale(sale);
             if (success) {
                 ctx.result("Sale Created");
                 ctx.status(201);
@@ -43,7 +43,7 @@ public class SalesController {
     // implements GET /sales
     public void getAllSales(final Context ctx) {
         try {
-            List<HomeSale> allSales = salesdao.getAllSales();
+            final List<HomeSale> allSales = salesdao.getAllSales();
             if (allSales.isEmpty()) {
                 ctx.result("No Sales Found");
                 ctx.status(404);
@@ -59,12 +59,12 @@ public class SalesController {
     // implements GET /sales/{saleID}
     public void getSaleByID(final Context ctx) {
         try {
-            int id = Integer.parseInt(ctx.pathParam("id"));
-            HomeSale sale = salesdao.getSaleById(id);
+            final int saleId = Integer.parseInt(ctx.pathParam("id"));
+            final HomeSale sale = salesdao.getSaleById(saleId);
             if (sale != null) {
                 ctx.json(sale);
             } else {
-                ctx.status(404).result("Sale with id {" + id + "} not found");
+                ctx.status(404).result("Sale with saleId {" + saleId + "} not found");
             }
         } catch (SQLException e) {
             this.error(ctx, "Database error: " + e.getMessage(), 500);
@@ -74,8 +74,8 @@ public class SalesController {
     // Implements GET /sales/postcode/{postcodeID}
     public void findSaleByPostCode(final Context ctx) {
         try {
-            int postCode = Integer.parseInt(ctx.pathParam("postCode"));
-            List<HomeSale> sales = salesdao.getSalesByPostCode(postCode);
+            final int postCode = Integer.parseInt(ctx.pathParam("postCode"));
+            final List<HomeSale> sales = salesdao.getSalesByPostCode(postCode);
             if (sales.isEmpty()) {
                 ctx.result("No sales for postcode found");
                 ctx.status(404);

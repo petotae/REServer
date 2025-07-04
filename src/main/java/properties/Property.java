@@ -3,6 +3,11 @@ package properties;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 
+/**
+ * Represents a property with various attributes.
+ * This class provides getters and setters for each attribute,
+ * and allows dynamic access to properties by name.
+ */
 public class Property {
     private Long propertyId;
     private String downloadDate;
@@ -200,8 +205,8 @@ public class Property {
 
     public Object get(final String property) {
         try {
-            PropertyDescriptor pd = new PropertyDescriptor(property, this.getClass());
-            return pd.getReadMethod().invoke(this);
+            final PropertyDescriptor propDesc = new PropertyDescriptor(property, this.getClass());
+            return propDesc.getReadMethod().invoke(this);
         } catch (IntrospectionException | ReflectiveOperationException e) {
             throw new IllegalArgumentException(
                     "Unable to get property '" + property + "'", e);
@@ -210,23 +215,23 @@ public class Property {
 
     public void set(final String property, final Object value) {
         try {
-            PropertyDescriptor pd = new PropertyDescriptor(property, this.getClass());
-            pd.getWriteMethod().invoke(this, value);
+            final PropertyDescriptor propDesc = new PropertyDescriptor(property, this.getClass());
+            propDesc.getWriteMethod().invoke(this, value);
         } catch (IntrospectionException | ReflectiveOperationException e) {
             throw new IllegalArgumentException(
                     "Unable to set property '" + property + "' to " + value, e);
         }
     }
 
-    private String stringOrNull(String s) {
-        return s == null ? "null" : s;
+    private String stringOrNull(final String str) {
+        return str == null ? "null" : str;
     }
 
-    private Long longOrNull(Long l) {
-        return l == null ? 0 : l;
+    private Long longOrNull(final Long lon) {
+        return lon == null ? 0 : lon;
     }
 
-    private Double doubleOrNull(Double d) {
-        return d == null ? 0 : d;
+    private Double doubleOrNull(final Double dou) {
+        return dou == null ? 0 : dou;
     }
 }
