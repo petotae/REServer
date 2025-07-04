@@ -1,6 +1,8 @@
 package properties;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -8,13 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import io.javalin.Javalin;
 import io.javalin.http.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.sql.SQLException;
 
 public class PropertyController {
 
@@ -156,7 +151,7 @@ public class PropertyController {
             String param = ctx.pathParam("param");
             String paramval = ctx.pathParam("paramval");
 
-            List<Property> properties = propertydao.getPropertiesByField(param, paramval);
+            List<Property> properties = propertydao.getPropByParam(param, paramval);
 
             double averagePurchasePrice = propertydao.getAverageOfField(properties, "purchasePrice");
             if (properties.isEmpty()) {

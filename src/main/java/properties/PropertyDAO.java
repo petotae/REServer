@@ -76,7 +76,6 @@ public class PropertyDAO {
             Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(sql + LIMIT_RECORDS);
             if (column != null) {
-                case POST_CODE:
                 if (LONG_ATTRIBUTES.contains(column)) {
                     // parse the incoming String (e.g. "1234") to long
                     long longVal = Long.parseLong(paramVal.toString());
@@ -156,7 +155,7 @@ public class PropertyDAO {
 
     public double getAverageOfField(List<Property> properties, String param) throws SQLException {
         List<Number> values = properties.stream()
-            .map(p -> p.get(param))  
+            .map(p -> (Number) p.get(param))  
             .filter(val -> val instanceof Number)
             .map(val -> (Number) val)
             .collect(Collectors.toList());
