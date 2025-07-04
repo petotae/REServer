@@ -21,23 +21,23 @@ public class SalesDAO {
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setLong(1, homeSale.getProperty_id());
-            stmt.setString(2, homeSale.getDownload_date());
-            stmt.setString(3, homeSale.getCouncil_name());
-            stmt.setLong(4, homeSale.getPurchase_price());
+            stmt.setLong(1, homeSale.getPropertyId());
+            stmt.setString(2, homeSale.getDownloadDate());
+            stmt.setString(3, homeSale.getCouncilName());
+            stmt.setLong(4, homeSale.getPurchasePrice());
             stmt.setString(5, homeSale.getAddress());
-            stmt.setLong(6, homeSale.getPost_code());
-            stmt.setString(7, homeSale.getProperty_type());
-            stmt.setString(8, homeSale.getStrata_lot_number());
-            stmt.setString(9, homeSale.getProperty_name());
+            stmt.setLong(6, homeSale.getPostCode());
+            stmt.setString(7, homeSale.getPropertyType());
+            stmt.setString(8, homeSale.getStrataLotNumber());
+            stmt.setString(9, homeSale.getPropertyName());
             stmt.setDouble(10, homeSale.getArea());
-            stmt.setString(11, homeSale.getArea_type());
-            stmt.setString(12, homeSale.getContract_date());
-            stmt.setString(13, homeSale.getSettlement_date());
+            stmt.setString(11, homeSale.getAreaType());
+            stmt.setString(12, homeSale.getContractDate());
+            stmt.setString(13, homeSale.getSettlementDate());
             stmt.setString(14, homeSale.getZoning());
-            stmt.setString(15, homeSale.getNature_of_property());
-            stmt.setString(16, homeSale.getPrimary_purpose());
-            stmt.setString(17, homeSale.getLegal_description());
+            stmt.setString(15, homeSale.getNatureOfProperty());
+            stmt.setString(16, homeSale.getPrimaryPurpose());
+            stmt.setString(17, homeSale.getLegalDescription());
 
             stmt.executeUpdate();
             return true;

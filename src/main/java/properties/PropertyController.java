@@ -47,12 +47,12 @@ public class PropertyController {
     public void findPropertyByParam(Context ctx) {
         try {
             String param = ctx.pathParam("param");
-            String paramval = ctx.pathParam("paramval");
+            String paramVal = ctx.pathParam("paramVal");
 
-            List<Property> properties = propertydao.getPropByParam(param, paramval);
+            List<Property> properties = propertydao.getPropByParam(param, paramVal);
 
             if (properties.isEmpty()) {
-                ctx.result("No properties for " + param + " with {" + paramval + "} found");
+                ctx.result("No properties for " + param + " with {" + paramVal + "} found");
                 ctx.status(404);
             } else {
                 ctx.json(properties);
@@ -96,9 +96,8 @@ public class PropertyController {
             String param = ctx.pathParam("param");
             String paramVal = ctx.pathParam("paramVal");
 
-            List<String> acceptedParams = Arrays.asList(
-                new String[]{"property_id", "download_date", "contract_date", "purchase_price", 
-                             "post_code", "settlement_date", "area"});
+            List<String> acceptedParams = Arrays.asList("property_id", "download_date", "contract_date", "purchase_price",
+                             "post_code", "settlement_date", "area");
 
             List<Property> properties = new ArrayList<>();
             if (acceptedParams.contains(param)) {

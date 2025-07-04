@@ -5,8 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="de501043-aafb-4a41-9e24-49285bd605ad" name="Changes" comment="remove unused imports">
+      <change afterPath="$PROJECT_DIR$/.idea/PMDPlugin.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/REServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/REServer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/properties/Property.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/properties/Property.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/properties/PropertyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/properties/PropertyController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/properties/PropertyDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/properties/PropertyDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sales/HomeSale.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sales/HomeSale.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sales/SalesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sales/SalesController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sales/SalesDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sales/SalesDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sales/TestSupabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sales/TestSupabaseConnection.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +53,7 @@
   &quot;isMigrated&quot;: true
 }</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
@@ -61,7 +69,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "greater-than-less-than",
+    "git-widget-placeholder": "pmd",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
@@ -73,7 +81,7 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -93,6 +101,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.REServer" />
         <item itemvalue="Application.REServer" />
       </list>
     </recent_temporary>

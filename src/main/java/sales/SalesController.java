@@ -36,9 +36,7 @@ public class SalesController {
                 ctx.status(400);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            ctx.result("Database error: " + e.getMessage());
-            ctx.status(500);
+            this.error(ctx, "Database error: " + e.getMessage(), 500);
         }
     }
 
@@ -54,9 +52,7 @@ public class SalesController {
                 ctx.status(200);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            ctx.result("Database error: " + e.getMessage());
-            ctx.status(500);
+            this.error(ctx, "Database error: " + e.getMessage(), 500);
         }
     }
 
@@ -71,9 +67,7 @@ public class SalesController {
                 ctx.status(404).result("Sale with id {" + id + "} not found");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            ctx.result("Database error: " + e.getMessage());
-            ctx.status(500);
+            this.error(ctx, "Database error: " + e.getMessage(), 500);
         }
     }
 
@@ -90,9 +84,7 @@ public class SalesController {
                 ctx.status(200);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            ctx.result("Database error: " + e.getMessage());
-            ctx.status(500);
+            this.error(ctx, "Database error: " + e.getMessage(), 500);
         }
     }
 

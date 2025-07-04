@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class PropertyDAO {
@@ -14,10 +15,12 @@ public class PropertyDAO {
     private static final String JDBC_PASSWORD = "iangortoncsw4530";
     private static final String LIMIT_RECORDS = " LIMIT 100"; // Only show first 100 properties matching query
     private static final List<String> LONG_ATTRIBUTES = Arrays
-            .asList(new String[] { "property_id", "purchase_price", "post_code" });
-    private static final List<String> DOUBLE_ATTRIBUTES = Arrays.asList(new String[] { "area" });
+            .asList("property_id", "purchase_price", "post_code");
+    private static final List<String> DOUBLE_ATTRIBUTES = Arrays.asList("area");
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    Logger logger = Logger.getLogger(PropertyDAO.class.getName());
 
     public boolean createProp(Property property) throws SQLException {
         Map<String, Object> props = MAPPER.convertValue(
@@ -26,7 +29,7 @@ public class PropertyDAO {
                 });
         props.remove("class");
 
-        System.out.println(props);
+        logger.fine("Creating property: " + props.toString() );
 
         PropertyDataField[] fields = PropertyDataField.values();
         String columnList = Arrays.stream(fields)
@@ -112,7 +115,7 @@ public class PropertyDAO {
                 results.add(p);
             }
         } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
+            logger.severe( "Database error: " + e.getMessage());
         }
         return results;
     }
@@ -147,7 +150,7 @@ public class PropertyDAO {
                 results.add(p);
             }
         } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
+            logger.severe( "Database error: " + e.getMessage());
         }
 
         return results;

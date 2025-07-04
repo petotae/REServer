@@ -26,23 +26,23 @@ public class Property {
     }
 
     public Property(
-            Long propertyId,
-            String downloadDate,
-            String councilName,
-            Long purchasePrice,
-            String address,
-            Long postCode,
-            String propertyType,
-            String strataLotNumber,
-            String propertyName,
-            Double area,
-            String areaType,
-            String contractDate,
-            String settlementDate,
-            String zoning,
-            String natureOfProperty,
-            String primaryPurpose,
-            String legalDescription) {
+            final Long propertyId,
+            final String downloadDate,
+            final String councilName,
+            final Long purchasePrice,
+            final String address,
+            final Long postCode,
+            final String propertyType,
+            final String strataLotNumber,
+            final String propertyName,
+            final Double area,
+            final String areaType,
+            final String contractDate,
+            final String settlementDate,
+            final String zoning,
+            final String natureOfProperty,
+            final String primaryPurpose,
+            final String legalDescription) {
         this.propertyId = this.longOrNull(propertyId);
         this.downloadDate = this.stringOrNull(downloadDate);
         this.councilName = this.stringOrNull(councilName);
@@ -66,7 +66,7 @@ public class Property {
         return propertyId;
     }
 
-    public void setPropertyId(Long propertyId) {
+    public void setPropertyId(final Long propertyId) {
         this.propertyId = this.longOrNull(propertyId);
     }
 
