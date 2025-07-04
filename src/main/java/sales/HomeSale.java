@@ -1,26 +1,101 @@
 package sales;
 
+/**
+ * HomeSale represents a sale of a home property.
+ * It contains various attributes related to the property and the sale.
+ * This class is used to store and retrieve home sale data.
+ */
 public class HomeSale {
 
+    /**
+     * Unique identifier for the property.
+     */
     private long propertyId;
+    /**
+     * Date when the property data was downloaded.
+     */
     private String downloadDate;
+    /**
+     * Name of the council where the property is located.
+     */
     private String councilName;
+    /**
+     * Purchase price of the property.
+     */
     private long purchasePrice;
+    /**
+     * Address of the property.
+     */
     private String address;
+    /**
+     * Postcode of the property.
+     */
     private long postCode;
+    /**
+     * Type of the property.
+     */
     private String propertyType;
+    /**
+     * Strata lot number if applicable.
+     */
     private String strataLotNumber;
+    /**
+     * Name of the property, if applicable.
+     */
     private String propertyName;
+    /**
+     * Area of the property.
+     */
     private double area;
+    /**
+     * Type of area measurement.
+     */
     private String areaType;
+    /**
+     * Date when the contract for the property was signed.
+     */
     private String contractDate;
+    /**
+     * Date when the property settlement occurred.
+     */
     private String settlementDate;
+    /**
+     * Zoning classification of the property.
+     */
     private String zoning;
+    /**
+     * Nature of the property).
+     */
     private String natureOfProperty;
+    /**
+     * Primary purpose of the property.
+     */
     private String primaryPurpose;
+    /**
+     * Legal description of the property.
+     */
     private String legalDescription;
 
-    // Full constructor
+    /**
+     * Constructor for HomeSale
+     * @param propertyId
+     * @param downloadDate
+     * @param councilName
+     * @param purchasePrice
+     * @param address
+     * @param postCode
+     * @param propertyType
+     * @param strataLotNumber
+     * @param propertyName
+     * @param area
+     * @param areaType
+     * @param contractDate
+     * @param settlementDate
+     * @param zoning
+     * @param natureOfProperty
+     * @param primaryPurpose
+     * @param legalDescription
+     */
     public HomeSale(final long propertyId, final String downloadDate, final String councilName, final long purchasePrice, final String address,
                     final long postCode, final String propertyType, final String strataLotNumber, final String propertyName, final double area,
                     final String areaType, final String contractDate, final String settlementDate, final String zoning,
@@ -44,7 +119,10 @@ public class HomeSale {
         this.legalDescription = legalDescription;
     }
 
-    // No-arg constructor for JSON
+    /**
+     * Default constructor for HomeSale.
+     * This is required for frameworks that require a no-argument constructor.
+     */
     public HomeSale() {}
 
     // Getters and setters

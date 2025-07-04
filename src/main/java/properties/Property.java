@@ -9,24 +9,79 @@ import java.beans.PropertyDescriptor;
  * and allows dynamic access to properties by name.
  */
 public class Property {
+    /**
+     * Unique identifier for the property.
+     */
     private Long propertyId;
+    /**
+     * Date when the property data was downloaded.
+     */
     private String downloadDate;
+    /**
+     * Name of the council where the property is located.
+     */
     private String councilName;
+    /**
+     * Purchase price of the property.
+     */
     private Long purchasePrice;
+    /**
+     * Address of the property.
+     */
     private String address;
+    /**
+     * Postcode of the property.
+     */
     private Long postCode;
+    /**
+     * Type of the property.
+     */
     private String propertyType;
+    /**
+     * Strata lot number if applicable.
+     */
     private String strataLotNumber;
+/**
+     * Name of the property, if applicable.
+     */
     private String propertyName;
+    /**
+     * Area of the property.
+     */
     private Double area;
+    /**
+     * Type of area measurement.
+     */
     private String areaType;
+    /**
+     * Date when the contract for the property was signed.
+     */
     private String contractDate;
+    /**
+     * Date when the property settlement occurred.
+     */
     private String settlementDate;
+    /**
+     * Zoning classification of the property.
+     */
     private String zoning;
+    /**
+     * Nature of the property.
+     */
     private String natureOfProperty;
+    /**
+     * Primary purpose of the property.
+     */
     private String primaryPurpose;
+    /**
+     * Legal description of the property.
+     */
     private String legalDescription;
 
+    /**
+     * Default constructor for Property.
+     * Initializes a new instance of the Property class.
+     */
     public Property() {
     }
 
@@ -199,10 +254,20 @@ public class Property {
         return legalDescription;
     }
 
+    /**
+     * Sets the legal description of the property.
+     *
+     * @param legalDescription the legal description to set
+     */
     public void setLegalDescription(final String legalDescription) {
         this.legalDescription = this.stringOrNull(legalDescription);
     }
 
+    /**
+     * Returns a string representation of the property.
+     *
+     * @return a string containing all property details
+     */
     public Object get(final String property) {
         try {
             final PropertyDescriptor propDesc = new PropertyDescriptor(property, this.getClass());
@@ -213,6 +278,12 @@ public class Property {
         }
     }
 
+    /**
+     * Sets a property value dynamically by its name.
+     *
+     * @param property the name of the property to set
+     * @param value    the value to set for the property
+     */
     public void set(final String property, final Object value) {
         try {
             final PropertyDescriptor propDesc = new PropertyDescriptor(property, this.getClass());

@@ -9,11 +9,28 @@ import org.slf4j.LoggerFactory;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
+/**
+ * SalesController handles HTTP requests related to home sales.
+ * It provides endpoints to create a sale, retrieve sales by ID,
+ * get all sales, and find sales by postcode.
+ */
 public class SalesController {
 
+    /**
+     * Logger for logging messages in SalesController.
+     */
     public final Logger log = LoggerFactory.getLogger(SalesController.class);
+    /**
+     * Instance of SalesDAO to interact with the database.
+     * This is used to perform CRUD operations on home sales.
+     */
     private final SalesDAO salesdao = new SalesDAO();
 
+    /**
+     * Registers the routes for the SalesController.
+     *
+     * @param app the Javalin application instance
+     */
     public void registerRoutes(final Javalin app) {
         app.post("/createSale", this::createSale);
         app.get("/sales/{id}", this::getSaleByID);
@@ -21,7 +38,12 @@ public class SalesController {
         app.get("/sales/postcode/{postCode}", this::findSaleByPostCode);
     }
 
-    // implements POST /sales
+    /**
+     * Creates a new home sale.
+     * Expects a HomeSale object in the request body.
+     *
+     * @param ctx the Javalin context
+     */
     public void createSale(final Context ctx) {
         try {
             // Extract HomeSale from request body
@@ -40,7 +62,10 @@ public class SalesController {
         }
     }
 
-    // implements GET /sales
+    /**
+     * Retrieves all sales from the database.
+     * @param ctx
+     */
     public void getAllSales(final Context ctx) {
         try {
             final List<HomeSale> allSales = salesdao.getAllSales();
@@ -56,7 +81,11 @@ public class SalesController {
         }
     }
 
-    // implements GET /sales/{saleID}
+    /**
+     * Retrieves a sale by its ID.
+     *
+     * @param ctx the Javalin context
+     */
     public void getSaleByID(final Context ctx) {
         try {
             final int saleId = Integer.parseInt(ctx.pathParam("id"));
@@ -71,7 +100,10 @@ public class SalesController {
         }
     }
 
-    // Implements GET /sales/postcode/{postcodeID}
+    /**     * Finds sales by postcode.
+     *
+     * @param ctx the Javalin context
+     */
     public void findSaleByPostCode(final Context ctx) {
         try {
             final int postCode = Integer.parseInt(ctx.pathParam("postCode"));
