@@ -3,7 +3,14 @@ package app;
 import io.javalin.Javalin;
 import properties.PropertyController;
 
+/**
+ * Main class to run property server
+ */
 public class REServer {
+    /**
+     * Main method to run property server
+     * @param args Command line arguments
+     */
     public static void main(String[] args) {
         PropertyController propertyController = new PropertyController();
         // start Javalin on port 7070
