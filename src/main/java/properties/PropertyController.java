@@ -147,9 +147,9 @@ public class PropertyController {
     public void getAvgPurchasePrice(final Context ctx) {
         try {
             final String param = ctx.pathParam("param");
-            final String paramval = ctx.pathParam("paramval");
+            final String paramVal = ctx.pathParam("paramval");
 
-            final List<Property> properties = propertydao.getPropByParam(param, paramval);
+            final List<Property> properties = propertydao.getPropByParam(param, paramVal);
 
             double averagePurchasePrice = propertydao.getAverageOfField(properties, "purchasePrice");
             this.addResponseToContext(ctx, properties, averagePurchasePrice, "No properties found");
