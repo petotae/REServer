@@ -9,12 +9,33 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * SalesDAO provides methods to interact with the sales database.
+ * It allows for creating new sales, retrieving sales by ID or postcode,
+ * and fetching all sales or sale prices.
+ */
 public class SalesDAO {
 
+    /**
+     * JDBC URL
+     */
     private static final String JDBC_URL = "jdbc:postgresql://aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?sslmode=require";
+    /**
+     * JDBC User
+     */
     private static final String JDBC_USER = "postgres.jnghzszlarsaxxhiavcv";
+    /**
+     * JDBC Pass
+     */
     private static final String JDBC_PASSWORD = "iangortoncsw4530";
 
+    /**
+     * Inserts a new home sale into the database.
+     *
+     * @param homeSale the HomeSale object containing sale details
+     * @return true if the sale was successfully added, false otherwise
+     * @throws SQLException if a database access error occurs
+     */
     public boolean newSale(final HomeSale homeSale) throws SQLException {
         final String sql = "INSERT INTO nsw_property_data (property_id, download_date, council_name, purchase_price, address, post_code, property_type, strata_lot_number, property_name, area, area_type, contract_date, settlement_date, zoning, nature_of_property, primary_purpose, legal_description) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -44,6 +65,13 @@ public class SalesDAO {
         }
     }
 
+    /**
+     * Retrieves a home sale by its ID.
+     *
+     * @param saleID the ID of the sale to retrieve
+     * @return the HomeSale object if found, null otherwise
+     * @throws SQLException if a database access error occurs
+     */
     public HomeSale getSaleById(final long saleID) throws SQLException {
         final String sql = "SELECT * FROM nsw_property_data WHERE property_id = ?";
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
@@ -57,6 +85,13 @@ public class SalesDAO {
         return null;
     }
 
+    /**
+     * Retrieves all home sales for a given postcode.
+     *
+     * @param postCode the postcode to filter sales by
+     * @return a list of HomeSale objects for the specified postcode
+     * @throws SQLException if a database access error occurs
+     */
     public List<HomeSale> getSalesByPostCode(final int postCode) throws SQLException {
         final String sql = "SELECT * FROM nsw_property_data WHERE post_code = ?";
         final List<HomeSale> sales = new ArrayList<>();
@@ -71,6 +106,12 @@ public class SalesDAO {
         return sales;
     }
 
+    /**
+     * Retrieves all sale prices from the database.
+     *
+     * @return a list of sale prices
+     * @throws SQLException if a database access error occurs
+     */
     public List<Long> getAllSalePrices() throws SQLException {
         final String sql = "SELECT purchase_price FROM nsw_property_data";
         final List<Long> prices = new ArrayList<>();
@@ -84,6 +125,12 @@ public class SalesDAO {
         return prices;
     }
 
+/**
+     * Retrieves all home sales from the database.
+     *
+     * @return a list of HomeSale objects
+     * @throws SQLException if a database access error occurs
+     */
     public List<HomeSale> getAllSales() throws SQLException {
         final String sql = "SELECT * FROM nsw_property_data";
         final List<HomeSale> sales = new ArrayList<>();
