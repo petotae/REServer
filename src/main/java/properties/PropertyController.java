@@ -26,7 +26,7 @@ public class PropertyController {
         app.get("/getAveragePurchasePrice/{param}/{paramval}", this::getAvgPurchasePrice);
     }
 
-    public void createProperty(Context ctx) {
+    public void createProperty(final Context ctx) {
         try {
             // Extract HomeSale from request body
             Property prop = ctx.bodyValidator(Property.class).get();
@@ -44,7 +44,7 @@ public class PropertyController {
         }
     }
 
-    public void findPropertyByParam(Context ctx) {
+    public void findPropertyByParam(final Context ctx) {
         try {
             String param = ctx.pathParam("param");
             String paramVal = ctx.pathParam("paramVal");
@@ -65,7 +65,7 @@ public class PropertyController {
         }
     }
 
-    public void getAllProperties(Context ctx) {
+    public void getAllProperties(final Context ctx) {
         try {
             List<Property> properties = propertydao.getAllProps();
 
@@ -83,15 +83,15 @@ public class PropertyController {
         }
     }
 
-    public void findPropertiesGreaterThan(Context ctx) {
+    public void findPropertiesGreaterThan(final Context ctx) {
         findPropertiesGreaterThanLessThan(ctx, true);
     }
 
-    public void findPropertiesLessThan(Context ctx) {
+    public void findPropertiesLessThan(final Context ctx) {
         findPropertiesGreaterThanLessThan(ctx, false);
     }
 
-    private void findPropertiesGreaterThanLessThan(Context ctx, Boolean isGreaterThan) {
+    private void findPropertiesGreaterThanLessThan(final Context ctx, final Boolean isGreaterThan) {
         try {
             String param = ctx.pathParam("param");
             String paramVal = ctx.pathParam("paramVal");
@@ -109,7 +109,7 @@ public class PropertyController {
         }
     }
 
-    public void getPropertiesByParams(Context ctx) {
+    public void getPropertiesByParams(final Context ctx) {
         try {
             // { "property_id": ["0"], "property_cost": ["10000"] }
             var paramsMap = ctx.queryParamMap();
@@ -130,13 +130,13 @@ public class PropertyController {
         }
     }
 
-    private void handleError(SQLException e, Context ctx) {
+    private void handleError(final SQLException e, final Context ctx) {
         e.printStackTrace();
         ctx.result("Database error: " + e.getMessage());
         ctx.status(500);
     }
 
-    private void addResponseToContext(Context ctx, List<Property> properties, String messageIfNoProperties) {
+    private void addResponseToContext(final Context ctx, final List<Property> properties, final String messageIfNoProperties) {
         if (properties.isEmpty()) {
             ctx.result(messageIfNoProperties);
             ctx.status(404);
@@ -145,7 +145,7 @@ public class PropertyController {
             ctx.status(200);
         }
     }
-    public void getAvgPurchasePrice(Context ctx) {
+    public void getAvgPurchasePrice(final Context ctx) {
         try {
             String param = ctx.pathParam("param");
             String paramval = ctx.pathParam("paramval");

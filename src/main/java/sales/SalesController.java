@@ -22,7 +22,7 @@ public class SalesController {
     }
 
     // implements POST /sales
-    public void createSale(Context ctx) {
+    public void createSale(final Context ctx) {
         try {
             // Extract HomeSale from request body
             HomeSale sale = ctx.bodyValidator(HomeSale.class).get();
@@ -41,7 +41,7 @@ public class SalesController {
     }
 
     // implements GET /sales
-    public void getAllSales(Context ctx) {
+    public void getAllSales(final Context ctx) {
         try {
             List<HomeSale> allSales = salesdao.getAllSales();
             if (allSales.isEmpty()) {
@@ -57,7 +57,7 @@ public class SalesController {
     }
 
     // implements GET /sales/{saleID}
-    public void getSaleByID(Context ctx) {
+    public void getSaleByID(final Context ctx) {
         try {
             int id = Integer.parseInt(ctx.pathParam("id"));
             HomeSale sale = salesdao.getSaleById(id);
@@ -72,7 +72,7 @@ public class SalesController {
     }
 
     // Implements GET /sales/postcode/{postcodeID}
-    public void findSaleByPostCode(Context ctx) {
+    public void findSaleByPostCode(final Context ctx) {
         try {
             int postCode = Integer.parseInt(ctx.pathParam("postCode"));
             List<HomeSale> sales = salesdao.getSalesByPostCode(postCode);
@@ -88,7 +88,7 @@ public class SalesController {
         }
     }
 
-    private Context error(Context ctx, String msg, int code) {
+    private Context error(final Context ctx, final String msg, int code) {
         ctx.result(msg);
         ctx.status(code);
         return ctx;

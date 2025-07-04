@@ -22,7 +22,7 @@ public class PropertyDAO {
 
     Logger logger = Logger.getLogger(PropertyDAO.class.getName());
 
-    public boolean createProp(Property property) throws SQLException {
+    public boolean createProp(final Property property) throws SQLException {
         Map<String, Object> props = MAPPER.convertValue(
                 property,
                 new TypeReference<Map<String, Object>>() {
@@ -53,7 +53,7 @@ public class PropertyDAO {
         }
     }
 
-    public List<Property> getPropByParam(String param, Object paramVal) throws SQLException {
+    public List<Property> getPropByParam(final String param, final Object paramVal) throws SQLException {
         PropertyDataField field = PropertyDataField.valueOf(param.toUpperCase());
         String column = field.name().toLowerCase();
         String sql = "SELECT * FROM nsw_property_data WHERE " + column + " = ?";
@@ -64,7 +64,7 @@ public class PropertyDAO {
         return this.getPropertiesFromDatabase("SELECT * FROM nsw_property_data", null, null);
     }
 
-    public List<Property> getPropertiesGreaterThanLessThan(String param, Object paramVal, Boolean isGreaterThan)
+    public List<Property> getPropertiesGreaterThanLessThan(final String param, final Object paramVal, final Boolean isGreaterThan)
             throws SQLException {
         PropertyDataField field = PropertyDataField.valueOf(param.toUpperCase());
         String column = field.name().toLowerCase();
@@ -72,7 +72,7 @@ public class PropertyDAO {
         return this.getPropertiesFromDatabase(sql, column, paramVal);
     }
 
-    private List<Property> getPropertiesFromDatabase(String sql, String column, Object paramVal) throws SQLException {
+    private List<Property> getPropertiesFromDatabase(final String sql, final String column, final Object paramVal) throws SQLException {
         List<Property> results = new ArrayList<>();
 
         try {
@@ -156,7 +156,7 @@ public class PropertyDAO {
         return results;
     }
 
-    public double getAverageOfField(List<Property> properties, String param) throws SQLException {
+    public double getAverageOfField(final List<Property> properties, final String param) throws SQLException {
         List<Number> values = properties.stream()
             .map(p -> (Number) p.get(param))  
             .filter(val -> val instanceof Number)
@@ -171,7 +171,7 @@ public class PropertyDAO {
 
 
 
-    public List<Property> getPropByParams(Map<String, List<String>> filters) throws SQLException {
+    public List<Property> getPropByParams(final Map<String, List<String>> filters) throws SQLException {
         String sql = "SELECT * FROM nsw_property_data";
         List<Object> paramVals = new ArrayList<>();
         List<String> paramKeys = new ArrayList<>();

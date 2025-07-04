@@ -74,7 +74,7 @@ public class Property {
         return downloadDate;
     }
 
-    public void setDownloadDate(String downloadDate) {
+    public void setDownloadDate(final String downloadDate) {
         this.downloadDate = this.stringOrNull(downloadDate);
     }
 
@@ -82,7 +82,7 @@ public class Property {
         return councilName;
     }
 
-    public void setCouncilName(String councilName) {
+    public void setCouncilName(final String councilName) {
         this.councilName = this.stringOrNull(councilName);
     }
 
@@ -90,7 +90,7 @@ public class Property {
         return purchasePrice;
     }
 
-    public void setPurchasePrice(Long purchasePrice) {
+    public void setPurchasePrice(final Long purchasePrice) {
         this.purchasePrice = this.longOrNull(purchasePrice);
     }
 
@@ -98,7 +98,7 @@ public class Property {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(final String address) {
         this.address = this.stringOrNull(address);
     }
 
@@ -106,7 +106,7 @@ public class Property {
         return postCode;
     }
 
-    public void setPostCode(Long postCode) {
+    public void setPostCode(final Long postCode) {
         this.postCode = this.longOrNull(postCode);
     }
 
@@ -114,7 +114,7 @@ public class Property {
         return propertyType;
     }
 
-    public void setPropertyType(String propertyType) {
+    public void setPropertyType(final String propertyType) {
         this.propertyType = this.stringOrNull(propertyType);
     }
 
@@ -122,7 +122,7 @@ public class Property {
         return strataLotNumber;
     }
 
-    public void setStrataLotNumber(String strataLotNumber) {
+    public void setStrataLotNumber(final String strataLotNumber) {
         this.strataLotNumber = this.stringOrNull(strataLotNumber);
     }
 
@@ -130,7 +130,7 @@ public class Property {
         return propertyName;
     }
 
-    public void setPropertyName(String propertyName) {
+    public void setPropertyName(final String propertyName) {
         this.propertyName = this.stringOrNull(propertyName);
     }
 
@@ -138,7 +138,7 @@ public class Property {
         return area;
     }
 
-    public void setArea(Double area) {
+    public void setArea(final Double area) {
         this.area = this.doubleOrNull(area);
     }
 
@@ -146,7 +146,7 @@ public class Property {
         return areaType;
     }
 
-    public void setAreaType(String areaType) {
+    public void setAreaType(final String areaType) {
         this.areaType = this.stringOrNull(areaType);
     }
 
@@ -154,7 +154,7 @@ public class Property {
         return contractDate;
     }
 
-    public void setContractDate(String contractDate) {
+    public void setContractDate(final String contractDate) {
         this.contractDate = this.stringOrNull(contractDate);
     }
 
@@ -162,7 +162,7 @@ public class Property {
         return settlementDate;
     }
 
-    public void setSettlementDate(String settlementDate) {
+    public void setSettlementDate(final String settlementDate) {
         this.settlementDate = this.stringOrNull(settlementDate);
     }
 
@@ -170,7 +170,7 @@ public class Property {
         return zoning;
     }
 
-    public void setZoning(String zoning) {
+    public void setZoning(final String zoning) {
         this.zoning = this.stringOrNull(zoning);
     }
 
@@ -178,7 +178,7 @@ public class Property {
         return natureOfProperty;
     }
 
-    public void setNatureOfProperty(String natureOfProperty) {
+    public void setNatureOfProperty(final String natureOfProperty) {
         this.natureOfProperty = this.stringOrNull(natureOfProperty);
     }
 
@@ -186,7 +186,7 @@ public class Property {
         return primaryPurpose;
     }
 
-    public void setPrimaryPurpose(String primaryPurpose) {
+    public void setPrimaryPurpose(final String primaryPurpose) {
         this.primaryPurpose = this.stringOrNull(primaryPurpose);
     }
 
@@ -194,11 +194,11 @@ public class Property {
         return legalDescription;
     }
 
-    public void setLegalDescription(String legalDescription) {
+    public void setLegalDescription(final String legalDescription) {
         this.legalDescription = this.stringOrNull(legalDescription);
     }
 
-    public Object get(String property) {
+    public Object get(final String property) {
         try {
             PropertyDescriptor pd = new PropertyDescriptor(property, this.getClass());
             return pd.getReadMethod().invoke(this);
@@ -208,7 +208,7 @@ public class Property {
         }
     }
 
-    public void set(String property, Object value) {
+    public void set(final String property, final Object value) {
         try {
             PropertyDescriptor pd = new PropertyDescriptor(property, this.getClass());
             pd.getWriteMethod().invoke(this, value);
