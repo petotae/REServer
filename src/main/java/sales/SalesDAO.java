@@ -16,7 +16,7 @@ public class SalesDAO {
     private static final String JDBC_PASSWORD = "iangortoncsw4530";
 
     public boolean newSale(final HomeSale homeSale) throws SQLException {
-        String sql = "INSERT INTO nsw_property_data (property_id, download_date, council_name, purchase_price, address, post_code, property_type, strata_lot_number, property_name, area, area_type, contract_date, settlement_date, zoning, nature_of_property, primary_purpose, legal_description) " +
+        final String sql = "INSERT INTO nsw_property_data (property_id, download_date, council_name, purchase_price, address, post_code, property_type, strata_lot_number, property_name, area, area_type, contract_date, settlement_date, zoning, nature_of_property, primary_purpose, legal_description) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -45,77 +45,77 @@ public class SalesDAO {
     }
 
     public HomeSale getSaleById(final long saleID) throws SQLException {
-        String sql = "SELECT * FROM nsw_property_data WHERE property_id = ?";
+        final String sql = "SELECT * FROM nsw_property_data WHERE property_id = ?";
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, saleID);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return extractHomeSaleFromResultSet(rs);
+            final ResultSet resSet = stmt.executeQuery();
+            if (resSet.next()) {
+                return extractHomeSaleFromResultSet(resSet);
             }
         }
         return null;
     }
 
     public List<HomeSale> getSalesByPostCode(final int postCode) throws SQLException {
-        String sql = "SELECT * FROM nsw_property_data WHERE post_code = ?";
-        List<HomeSale> sales = new ArrayList<>();
+        final String sql = "SELECT * FROM nsw_property_data WHERE post_code = ?";
+        final List<HomeSale> sales = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, postCode);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                sales.add(extractHomeSaleFromResultSet(rs));
+            final ResultSet resSet = stmt.executeQuery();
+            while (resSet.next()) {
+                sales.add(extractHomeSaleFromResultSet(resSet));
             }
         }
         return sales;
     }
 
     public List<Long> getAllSalePrices() throws SQLException {
-        String sql = "SELECT purchase_price FROM nsw_property_data";
-        List<Long> prices = new ArrayList<>();
+        final String sql = "SELECT purchase_price FROM nsw_property_data";
+        final List<Long> prices = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                prices.add(rs.getLong("purchase_price"));
+             ResultSet resSet = stmt.executeQuery(sql)) {
+            while (resSet.next()) {
+                prices.add(resSet.getLong("purchase_price"));
             }
         }
         return prices;
     }
 
     public List<HomeSale> getAllSales() throws SQLException {
-        String sql = "SELECT * FROM nsw_property_data";
-        List<HomeSale> sales = new ArrayList<>();
+        final String sql = "SELECT * FROM nsw_property_data";
+        final List<HomeSale> sales = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                sales.add(extractHomeSaleFromResultSet(rs));
+             ResultSet resSet = stmt.executeQuery(sql)) {
+            while (resSet.next()) {
+                sales.add(extractHomeSaleFromResultSet(resSet));
             }
         }
         return sales;
     }
 
-    private HomeSale extractHomeSaleFromResultSet(final ResultSet rs) throws SQLException {
+    private HomeSale extractHomeSaleFromResultSet(final ResultSet resSet) throws SQLException {
         return new HomeSale(
-            rs.getLong("property_id"),
-            rs.getString("download_date"),
-            rs.getString("council_name"),
-            rs.getLong("purchase_price"),
-            rs.getString("address"),
-            rs.getLong("post_code"),
-            rs.getString("property_type"),
-            rs.getString("strata_lot_number"),
-            rs.getString("property_name"),
-            rs.getDouble("area"),
-            rs.getString("area_type"),
-            rs.getString("contract_date"),
-            rs.getString("settlement_date"),
-            rs.getString("zoning"),
-            rs.getString("nature_of_property"),
-            rs.getString("primary_purpose"),
-            rs.getString("legal_description")
+            resSet.getLong("property_id"),
+            resSet.getString("download_date"),
+            resSet.getString("council_name"),
+            resSet.getLong("purchase_price"),
+            resSet.getString("address"),
+            resSet.getLong("post_code"),
+            resSet.getString("property_type"),
+            resSet.getString("strata_lot_number"),
+            resSet.getString("property_name"),
+            resSet.getDouble("area"),
+            resSet.getString("area_type"),
+            resSet.getString("contract_date"),
+            resSet.getString("settlement_date"),
+            resSet.getString("zoning"),
+            resSet.getString("nature_of_property"),
+            resSet.getString("primary_purpose"),
+            resSet.getString("legal_description")
         );
     }
 }

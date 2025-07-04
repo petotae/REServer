@@ -21,7 +21,7 @@ public enum PropertyDataField {
 
     private final int index;
 
-    PropertyDataField(int index) {
+    PropertyDataField(final int index) {
         this.index = index;
     }
 

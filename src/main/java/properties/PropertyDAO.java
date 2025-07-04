@@ -26,7 +26,7 @@ public class PropertyDAO {
     Logger logger = LogManager.getLogger(PropertyDAO.class.getName());
 
     public boolean createProp(final Property property) throws SQLException {
-        Map<String, Object> props = MAPPER.convertValue(
+        final Map<String, Object> props = MAPPER.convertValue(
                 property,
                 new TypeReference<Map<String, Object>>() {
                 });
@@ -34,21 +34,21 @@ public class PropertyDAO {
         
         this.debug("Creating property: " + props.toString());
 
-        PropertyDataField[] fields = PropertyDataField.values();
-        String columnList = Arrays.stream(fields)
+        final PropertyDataField[] fields = PropertyDataField.values();
+        final String columnList = Arrays.stream(fields)
                 .map(f -> CaseConverter.camelToSnake(f.name().toLowerCase()))
                 .collect(Collectors.joining(", "));
-        String placeholders = String.join(", ",
+        final String placeholders = String.join(", ",
                 Collections.nCopies(fields.length, "?"));
 
-        String sql = "INSERT INTO nsw_property_data (" + columnList + ") VALUES (" + placeholders + ")";
+        final String sql = "INSERT INTO nsw_property_data (" + columnList + ") VALUES (" + placeholders + ")";
 
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            for (PropertyDataField f : fields) {
-                String propName = CaseConverter.snakeToCamel(f.name().toLowerCase());
-                Object value = props.get(propName);
+            for (final PropertyDataField f : fields) {
+                final String propName = CaseConverter.snakeToCamel(f.name().toLowerCase());
+                final Object value = props.get(propName);
                 stmt.setObject(f.getIndex(), value);
             }
 
@@ -57,9 +57,9 @@ public class PropertyDAO {
     }
 
     public List<Property> getPropByParam(final String param, final Object paramVal) throws SQLException {
-        PropertyDataField field = PropertyDataField.valueOf(param.toUpperCase());
-        String column = field.name().toLowerCase();
-        String sql = "SELECT * FROM nsw_property_data WHERE " + column + " = ?";
+        final PropertyDataField field = PropertyDataField.valueOf(param.toUpperCase());
+        final String column = field.name().toLowerCase();
+        final String sql = "SELECT * FROM nsw_property_data WHERE " + column + " = ?";
         return this.getPropertiesFromDatabase(sql, column, paramVal);
     }
 
@@ -69,53 +69,53 @@ public class PropertyDAO {
 
     public List<Property> getPropertiesGreaterThanLessThan(final String param, final Object paramVal, final Boolean isGreaterThan)
             throws SQLException {
-        PropertyDataField field = PropertyDataField.valueOf(param.toUpperCase());
-        String column = field.name().toLowerCase();
-        String sql = String.format("SELECT * FROM nsw_property_data WHERE %s %s ?", column, isGreaterThan ? ">" : "<");
+        final PropertyDataField field = PropertyDataField.valueOf(param.toUpperCase());
+        final String column = field.name().toLowerCase();
+        final String sql = String.format("SELECT * FROM nsw_property_data WHERE %s %s ?", column, isGreaterThan ? ">" : "<");
         return this.getPropertiesFromDatabase(sql, column, paramVal);
     }
 
     private List<Property> getPropertiesFromDatabase(final String sql, final String column, final Object paramVal) throws SQLException {
-        List<Property> results = new ArrayList<>();
+        final List<Property> results = new ArrayList<>();
 
         try {
-            Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-            PreparedStatement stmt = conn.prepareStatement(sql + LIMIT_RECORDS);
+            final Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+            final PreparedStatement stmt = conn.prepareStatement(sql + LIMIT_RECORDS);
             if (column != null) {
                 if (LONG_ATTRIBUTES.contains(column)) {
                     // parse the incoming String (e.g. "1234") to long
-                    long longVal = Long.parseLong(paramVal.toString());
+                    final long longVal = Long.parseLong(paramVal.toString());
                     stmt.setLong(1, longVal);
                 } else if (DOUBLE_ATTRIBUTES.contains(column)) {
                     // parse the incoming String (e.g. "12.34") to double
-                    Double doubleVal = Double.parseDouble(paramVal.toString());
+                    final Double doubleVal = Double.parseDouble(paramVal.toString());
                     stmt.setDouble(1, doubleVal);
                 } else {
                     stmt.setString(1, paramVal.toString());
                 }
             }
 
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                Property p = new Property(
-                        rs.getLong("property_id"),
-                        rs.getString("download_date"),
-                        rs.getString("council_name"),
-                        rs.getLong("purchase_price"),
-                        rs.getString("address"),
-                        rs.getLong("post_code"),
-                        rs.getString("property_type"),
-                        rs.getString("strata_lot_number"),
-                        rs.getString("property_name"),
-                        rs.getDouble("area"),
-                        rs.getString("area_type"),
-                        rs.getString("contract_date"),
-                        rs.getString("settlement_date"),
-                        rs.getString("zoning"),
-                        rs.getString("nature_of_property"),
-                        rs.getString("primary_purpose"),
-                        rs.getString("legal_description"));
-                results.add(p);
+            final ResultSet resSet = stmt.executeQuery();
+            while (resSet.next()) {
+                final Property prop = new Property(
+                        resSet.getLong("property_id"),
+                        resSet.getString("download_date"),
+                        resSet.getString("council_name"),
+                        resSet.getLong("purchase_price"),
+                        resSet.getString("address"),
+                        resSet.getLong("post_code"),
+                        resSet.getString("property_type"),
+                        resSet.getString("strata_lot_number"),
+                        resSet.getString("property_name"),
+                        resSet.getDouble("area"),
+                        resSet.getString("area_type"),
+                        resSet.getString("contract_date"),
+                        resSet.getString("settlement_date"),
+                        resSet.getString("zoning"),
+                        resSet.getString("nature_of_property"),
+                        resSet.getString("primary_purpose"),
+                        resSet.getString("legal_description"));
+                results.add(prop);
             }
         } catch (SQLException e) {
             this.debug("Database error: " + e.getMessage());
@@ -124,33 +124,33 @@ public class PropertyDAO {
     }
 
     public List<Property> getAllProps() throws SQLException {
-        String sql = "SELECT * FROM nsw_property_data";
-        List<Property> results = new ArrayList<>();
+        final String sql = "SELECT * FROM nsw_property_data";
+        final List<Property> results = new ArrayList<>();
 
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
                 PreparedStatement stmt = conn.prepareStatement(sql);
-                ResultSet rs = stmt.executeQuery()) {
+                ResultSet resSet = stmt.executeQuery()) {
 
-            while (rs.next()) {
-                Property p = new Property(
-                        rs.getLong("property_id"),
-                        rs.getString("download_date"),
-                        rs.getString("council_name"),
-                        rs.getLong("purchase_price"),
-                        rs.getString("address"),
-                        rs.getLong("post_code"),
-                        rs.getString("property_type"),
-                        rs.getString("strata_lot_number"),
-                        rs.getString("property_name"),
-                        rs.getDouble("area"),
-                        rs.getString("area_type"),
-                        rs.getString("contract_date"),
-                        rs.getString("settlement_date"),
-                        rs.getString("zoning"),
-                        rs.getString("nature_of_property"),
-                        rs.getString("primary_purpose"),
-                        rs.getString("legal_description"));
-                results.add(p);
+            while (resSet.next()) {
+                final Property prop = new Property(
+                        resSet.getLong("property_id"),
+                        resSet.getString("download_date"),
+                        resSet.getString("council_name"),
+                        resSet.getLong("purchase_price"),
+                        resSet.getString("address"),
+                        resSet.getLong("post_code"),
+                        resSet.getString("property_type"),
+                        resSet.getString("strata_lot_number"),
+                        resSet.getString("property_name"),
+                        resSet.getDouble("area"),
+                        resSet.getString("area_type"),
+                        resSet.getString("contract_date"),
+                        resSet.getString("settlement_date"),
+                        resSet.getString("zoning"),
+                        resSet.getString("nature_of_property"),
+                        resSet.getString("primary_purpose"),
+                        resSet.getString("legal_description"));
+                results.add(prop);
             }
         } catch (SQLException e) {
             this.debug("Database error: " + e.getMessage());
@@ -160,7 +160,7 @@ public class PropertyDAO {
     }
 
     public double getAverageOfField(final List<Property> properties, final String param) throws SQLException {
-        List<Number> values = properties.stream()
+        final List<Number> values = properties.stream()
             .map(p -> (Number) p.get(param))  
             .filter(val -> val instanceof Number)
             .map(val -> (Number) val)
@@ -176,17 +176,17 @@ public class PropertyDAO {
 
     public List<Property> getPropByParams(final Map<String, List<String>> filters) throws SQLException {
         String sql = "SELECT * FROM nsw_property_data";
-        List<Object> paramVals = new ArrayList<>();
-        List<String> paramKeys = new ArrayList<>();
+        final List<Object> paramVals = new ArrayList<>();
+        final List<String> paramKeys = new ArrayList<>();
 
         if (!filters.isEmpty()) {
             sql += " WHERE ";
             int keyIndex = 0;
-            int numKeys = filters.size();
+            final int numKeys = filters.size();
 
-            for (Map.Entry<String, List<String>> entry : filters.entrySet()) {
-                String key = entry.getKey();
-                List<String> values = entry.getValue();
+            for (final Map.Entry<String, List<String>> entry : filters.entrySet()) {
+                final String key = entry.getKey();
+                final List<String> values = entry.getValue();
 
                 String statement;
 
@@ -219,8 +219,8 @@ public class PropertyDAO {
 
             // Fill in ? parameters with correct types
             for (int i = 0; i < paramVals.size(); i++) {
-                String field = paramKeys.get(i).toLowerCase();
-                Object paramVal = paramVals.get(i);
+                final String field = paramKeys.get(i).toLowerCase();
+                final Object paramVal = paramVals.get(i);
 
                 switch (field) {
                     case "property_id":
@@ -236,35 +236,35 @@ public class PropertyDAO {
                 }
             }
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                List<Property> results = new ArrayList<>();
-                while (rs.next()) {
-                    Property p = new Property(
-                            rs.getLong("property_id"),
-                            rs.getString("download_date"),
-                            rs.getString("council_name"),
-                            rs.getLong("purchase_price"),
-                            rs.getString("address"),
-                            rs.getLong("post_code"),
-                            rs.getString("property_type"),
-                            rs.getString("strata_lot_number"),
-                            rs.getString("property_name"),
-                            rs.getDouble("area"),
-                            rs.getString("area_type"),
-                            rs.getString("contract_date"),
-                            rs.getString("settlement_date"),
-                            rs.getString("zoning"),
-                            rs.getString("nature_of_property"),
-                            rs.getString("primary_purpose"),
-                            rs.getString("legal_description"));
-                    results.add(p);
+            try (ResultSet resSet = stmt.executeQuery()) {
+                final List<Property> results = new ArrayList<>();
+                while (resSet.next()) {
+                    final Property prop = new Property(
+                            resSet.getLong("property_id"),
+                            resSet.getString("download_date"),
+                            resSet.getString("council_name"),
+                            resSet.getLong("purchase_price"),
+                            resSet.getString("address"),
+                            resSet.getLong("post_code"),
+                            resSet.getString("property_type"),
+                            resSet.getString("strata_lot_number"),
+                            resSet.getString("property_name"),
+                            resSet.getDouble("area"),
+                            resSet.getString("area_type"),
+                            resSet.getString("contract_date"),
+                            resSet.getString("settlement_date"),
+                            resSet.getString("zoning"),
+                            resSet.getString("nature_of_property"),
+                            resSet.getString("primary_purpose"),
+                            resSet.getString("legal_description"));
+                    results.add(prop);
                 }
                 return results;
             }
         }
     }
 
-    private void debug(String msg) {
+    private void debug(final String msg) {
         if (logger.isDebugEnabled()) {
             logger.debug(msg);
         }

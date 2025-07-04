@@ -25,12 +25,12 @@ public class TestSupabaseConnection {
                 debug("Supabase connection established, but isValid() returned false.");
             }
         } catch (SQLException e) {
-            logger.debug("Failed to connect to Supabase: " + e.getMessage());
+            debug("Failed to connect to Supabase: " + e.getMessage());
             e.printStackTrace();
         }
     }
     
-    private static void debug(String msg) {
+    private static void debug(final String msg) {
         if (logger.isDebugEnabled()) {
             logger.debug(msg);
         }
