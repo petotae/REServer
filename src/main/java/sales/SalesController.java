@@ -88,9 +88,8 @@ public class SalesController {
         }
     }
 
-    private Context error(final Context ctx, final String msg, int code) {
+    private void error(final Context ctx, final String msg, final int code) {
         ctx.result(msg);
         ctx.status(code);
-        return ctx;
     }
 }

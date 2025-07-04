@@ -4,12 +4,12 @@ public final class CaseConverter {
     private CaseConverter() {
     }
 
-    public static String camelToSnake(String s) {
+    public static String camelToSnake(final String s) {
         return s.replaceAll("([a-z])([A-Z])", "$1_$2")
                 .toLowerCase();
     }
 
-    public static String snakeToCamel(String s) {
+    public static String snakeToCamel(final String s) {
         String[] parts = s.split("_");
         StringBuilder sb = new StringBuilder(parts[0]);
         for (int i = 1; i < parts.length; i++) {

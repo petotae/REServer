@@ -21,10 +21,10 @@ public class HomeSale {
     private String legalDescription;
 
     // Full constructor
-    public HomeSale(long propertyId, String downloadDate, String councilName, long purchasePrice, String address,
-                    long postCode, String propertyType, String strataLotNumber, String propertyName, double area,
-                    String areaType, String contractDate, String settlementDate, String zoning,
-                    String natureOfProperty, String primaryPurpose, String legalDescription) {
+    public HomeSale(final long propertyId, final String downloadDate, final String councilName, final long purchasePrice, final String address,
+                    final long postCode, final String propertyType, final String strataLotNumber, final String propertyName, final double area,
+                    final String areaType, final String contractDate, final String settlementDate, final String zoning,
+                    final String natureOfProperty, final String primaryPurpose, final String legalDescription) {
         this.propertyId = propertyId;
         this.downloadDate = downloadDate;
         this.councilName = councilName;
@@ -53,7 +53,7 @@ public class HomeSale {
         return propertyId;
     }
 
-    public void setPropertyId(long propertyId) {
+    public void setPropertyId(final long propertyId) {
         this.propertyId = propertyId;
     }
 
@@ -61,7 +61,7 @@ public class HomeSale {
         return downloadDate;
     }
 
-    public void setDownloadDate(String downloadDate) {
+    public void setDownloadDate(final String downloadDate) {
         this.downloadDate = downloadDate;
     }
 
@@ -69,7 +69,7 @@ public class HomeSale {
         return councilName;
     }
 
-    public void setCouncilName(String councilName) {
+    public void setCouncilName(final String councilName) {
         this.councilName = councilName;
     }
 
@@ -77,7 +77,7 @@ public class HomeSale {
         return purchasePrice;
     }
 
-    public void setPurchasePrice(long purchasePrice) {
+    public void setPurchasePrice(final long purchasePrice) {
         this.purchasePrice = purchasePrice;
     }
 
@@ -85,7 +85,7 @@ public class HomeSale {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(final String address) {
         this.address = address;
     }
 
@@ -93,7 +93,7 @@ public class HomeSale {
         return postCode;
     }
 
-    public void setPostCode(long postCode) {
+    public void setPostCode(final long postCode) {
         this.postCode = postCode;
     }
 
@@ -101,7 +101,7 @@ public class HomeSale {
         return propertyType;
     }
 
-    public void setPropertyType(String propertyType) {
+    public void setPropertyType(final String propertyType) {
         this.propertyType = propertyType;
     }
 
@@ -109,7 +109,7 @@ public class HomeSale {
         return strataLotNumber;
     }
 
-    public void setStrataLotNumber(String strataLotNumber) {
+    public void setStrataLotNumber(final String strataLotNumber) {
         this.strataLotNumber = strataLotNumber;
     }
 
@@ -117,7 +117,7 @@ public class HomeSale {
         return propertyName;
     }
 
-    public void setPropertyName(String propertyName) {
+    public void setPropertyName(final String propertyName) {
         this.propertyName = propertyName;
     }
 
@@ -125,7 +125,7 @@ public class HomeSale {
         return area;
     }
 
-    public void setArea(double area) {
+    public void setArea(final double area) {
         this.area = area;
     }
 
@@ -133,7 +133,7 @@ public class HomeSale {
         return areaType;
     }
 
-    public void setAreaType(String areaType) {
+    public void setAreaType(final String areaType) {
         this.areaType = areaType;
     }
 
@@ -141,7 +141,7 @@ public class HomeSale {
         return contractDate;
     }
 
-    public void setContractDate(String contractDate) {
+    public void setContractDate(final String contractDate) {
         this.contractDate = contractDate;
     }
 
@@ -149,7 +149,7 @@ public class HomeSale {
         return settlementDate;
     }
 
-    public void setSettlementDate(String settlementDate) {
+    public void setSettlementDate(final String settlementDate) {
         this.settlementDate = settlementDate;
     }
 
@@ -157,7 +157,7 @@ public class HomeSale {
         return zoning;
     }
 
-    public void setZoning(String zoning) {
+    public void setZoning(final String zoning) {
         this.zoning = zoning;
     }
 
@@ -165,7 +165,7 @@ public class HomeSale {
         return natureOfProperty;
     }
 
-    public void setNatureOfProperty(String natureOfProperty) {
+    public void setNatureOfProperty(final String natureOfProperty) {
         this.natureOfProperty = natureOfProperty;
     }
 
@@ -173,7 +173,7 @@ public class HomeSale {
         return primaryPurpose;
     }
 
-    public void setPrimaryPurpose(String primaryPurpose) {
+    public void setPrimaryPurpose(final String primaryPurpose) {
         this.primaryPurpose = primaryPurpose;
     }
 
@@ -181,7 +181,7 @@ public class HomeSale {
         return legalDescription;
     }
 
-    public void setLegalDescription(String legalDescription) {
+    public void setLegalDescription(final String legalDescription) {
         this.legalDescription = legalDescription;
     }
 }

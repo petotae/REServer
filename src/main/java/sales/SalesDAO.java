@@ -15,7 +15,7 @@ public class SalesDAO {
     private static final String JDBC_USER = "postgres.jnghzszlarsaxxhiavcv";
     private static final String JDBC_PASSWORD = "iangortoncsw4530";
 
-    public boolean newSale(HomeSale homeSale) throws SQLException {
+    public boolean newSale(final HomeSale homeSale) throws SQLException {
         String sql = "INSERT INTO nsw_property_data (property_id, download_date, council_name, purchase_price, address, post_code, property_type, strata_lot_number, property_name, area, area_type, contract_date, settlement_date, zoning, nature_of_property, primary_purpose, legal_description) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
@@ -44,7 +44,7 @@ public class SalesDAO {
         }
     }
 
-    public HomeSale getSaleById(long saleID) throws SQLException {
+    public HomeSale getSaleById(final long saleID) throws SQLException {
         String sql = "SELECT * FROM nsw_property_data WHERE property_id = ?";
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -57,7 +57,7 @@ public class SalesDAO {
         return null;
     }
 
-    public List<HomeSale> getSalesByPostCode(int postCode) throws SQLException {
+    public List<HomeSale> getSalesByPostCode(final int postCode) throws SQLException {
         String sql = "SELECT * FROM nsw_property_data WHERE post_code = ?";
         List<HomeSale> sales = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
@@ -97,7 +97,7 @@ public class SalesDAO {
         return sales;
     }
 
-    private HomeSale extractHomeSaleFromResultSet(ResultSet rs) throws SQLException {
+    private HomeSale extractHomeSaleFromResultSet(final ResultSet rs) throws SQLException {
         return new HomeSale(
             rs.getLong("property_id"),
             rs.getString("download_date"),
