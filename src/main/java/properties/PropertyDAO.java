@@ -153,6 +153,21 @@ public class PropertyDAO {
         return results;
     }
 
+    public double getAverageOfField(List<Property> properties, String param) throws SQLException {
+        List<Number> values = properties.stream()
+            .map(p -> (Number) p.get(param))  
+            .filter(val -> val instanceof Number)
+            .map(val -> (Number) val)
+            .collect(Collectors.toList());
+
+        return values.stream()
+            .mapToDouble(Number::doubleValue)
+            .average()
+            .orElse(0.0);
+    }
+
+
+
     public List<Property> getPropByParams(Map<String, List<String>> filters) throws SQLException {
         String sql = "SELECT * FROM nsw_property_data";
         List<Object> paramVals = new ArrayList<>();

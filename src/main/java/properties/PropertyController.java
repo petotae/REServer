@@ -1,14 +1,15 @@
 package properties;
 
-import io.javalin.Javalin;
-import io.javalin.http.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.sql.SQLException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.javalin.Javalin;
+import io.javalin.http.Context;
 
 public class PropertyController {
 
@@ -22,6 +23,7 @@ public class PropertyController {
         app.get("/getPropertiesByParams", this::getPropertiesByParams);
         app.get("/getPropertiesGreaterThan/{param}/{paramVal}", this::findPropertiesGreaterThan);
         app.get("/getPropertiesLessThan/{param}/{paramVal}", this::findPropertiesLessThan);
+        app.get("/getAveragePurchasePrice/{param}/{paramval}", this::getAvgPurchasePrice);
     }
 
     public void createProperty(Context ctx) {
@@ -144,4 +146,26 @@ public class PropertyController {
             ctx.status(200);
         }
     }
+    public void getAvgPurchasePrice(Context ctx) {
+        try {
+            String param = ctx.pathParam("param");
+            String paramval = ctx.pathParam("paramval");
+
+            List<Property> properties = propertydao.getPropByParam(param, paramval);
+
+            double averagePurchasePrice = propertydao.getAverageOfField(properties, "purchasePrice");
+            if (properties.isEmpty()) {
+                ctx.result("No properties found");
+                ctx.status(404);
+            } else {
+                ctx.json(averagePurchasePrice);
+                ctx.status(200);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ctx.result("Database error: " + e.getMessage());
+            ctx.status(500);
+        }
+    }
+
 }

@@ -2,7 +2,6 @@ package properties;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
-import java.util.Objects;
 
 public class Property {
     private Long propertyId;
@@ -199,25 +198,25 @@ public class Property {
         this.legalDescription = this.stringOrNull(legalDescription);
     }
 
-    // public Object get(String property) {
-    //     try {
-    //         PropertyDescriptor pd = new PropertyDescriptor(property, this.getClass());
-    //         return pd.getReadMethod().invoke(this);
-    //     } catch (IntrospectionException | ReflectiveOperationException e) {
-    //         throw new IllegalArgumentException(
-    //                 "Unable to get property '" + property + "'", e);
-    //     }
-    // }
+    public Object get(String property) {
+        try {
+            PropertyDescriptor pd = new PropertyDescriptor(property, this.getClass());
+            return pd.getReadMethod().invoke(this);
+        } catch (IntrospectionException | ReflectiveOperationException e) {
+            throw new IllegalArgumentException(
+                    "Unable to get property '" + property + "'", e);
+        }
+    }
 
-    // public void set(String property, Object value) {
-    //     try {
-    //         PropertyDescriptor pd = new PropertyDescriptor(property, this.getClass());
-    //         pd.getWriteMethod().invoke(this, value);
-    //     } catch (IntrospectionException | ReflectiveOperationException e) {
-    //         throw new IllegalArgumentException(
-    //                 "Unable to set property '" + property + "' to " + value, e);
-    //     }
-    // }
+    public void set(String property, Object value) {
+        try {
+            PropertyDescriptor pd = new PropertyDescriptor(property, this.getClass());
+            pd.getWriteMethod().invoke(this, value);
+        } catch (IntrospectionException | ReflectiveOperationException e) {
+            throw new IllegalArgumentException(
+                    "Unable to set property '" + property + "' to " + value, e);
+        }
+    }
 
     private String stringOrNull(String s) {
         return s == null ? "null" : s;
