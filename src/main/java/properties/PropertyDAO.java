@@ -6,8 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.sql.*;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 
 public class PropertyDAO {
     private static final String JDBC_URL = "jdbc:postgresql://aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?sslmode=require";
@@ -20,7 +23,7 @@ public class PropertyDAO {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    Logger logger = Logger.getLogger(PropertyDAO.class.getName());
+    Logger logger = LogManager.getLogger(PropertyDAO.class.getName());
 
     public boolean createProp(final Property property) throws SQLException {
         Map<String, Object> props = MAPPER.convertValue(
@@ -28,8 +31,8 @@ public class PropertyDAO {
                 new TypeReference<Map<String, Object>>() {
                 });
         props.remove("class");
-
-        logger.fine("Creating property: " + props.toString() );
+        
+        this.debug("Creating property: " + props.toString());
 
         PropertyDataField[] fields = PropertyDataField.values();
         String columnList = Arrays.stream(fields)
@@ -115,7 +118,7 @@ public class PropertyDAO {
                 results.add(p);
             }
         } catch (SQLException e) {
-            logger.severe( "Database error: " + e.getMessage());
+            this.debug("Database error: " + e.getMessage());
         }
         return results;
     }
@@ -150,7 +153,7 @@ public class PropertyDAO {
                 results.add(p);
             }
         } catch (SQLException e) {
-            logger.severe( "Database error: " + e.getMessage());
+            this.debug("Database error: " + e.getMessage());
         }
 
         return results;
@@ -258,6 +261,12 @@ public class PropertyDAO {
                 }
                 return results;
             }
+        }
+    }
+
+    private void debug(String msg) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(msg);
         }
     }
 }

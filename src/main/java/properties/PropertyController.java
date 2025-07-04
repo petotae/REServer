@@ -5,15 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
 public class PropertyController {
-
-    public final Logger log = LoggerFactory.getLogger(PropertyController.class);
     private final PropertyDAO propertydao = new PropertyDAO();
 
     public void registerRoutes(Javalin app) {
