@@ -1,5 +1,7 @@
 package properties;
 
+import properties.util.ErrorResponse;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import io.javalin.http.NotFoundResponse;
+import io.javalin.openapi.*;
 
 public class PropertyController {
 
@@ -26,11 +30,16 @@ public class PropertyController {
         app.get("/getAveragePurchasePrice/{param}/{paramval}", this::getAvgPurchasePrice);
     }
 
+    @OpenApi(summary = "Create property", operationId = "createProperty", path = "/createProperty", methods = HttpMethod.POST, tags = {
+            "Property" }, requestBody = @OpenApiRequestBody(content = {
+                    @OpenApiContent(from = Property.class)
+            }), responses = {
+                    @OpenApiResponse(status = "201"),
+                    @OpenApiResponse(status = "400", content = { @OpenApiContent(from = ErrorResponse.class) })
+            })
     public void createProperty(Context ctx) {
         try {
-            // Extract HomeSale from request body
             Property prop = ctx.bodyValidator(Property.class).get();
-            // store new sale in database
             boolean success = propertydao.createProp(prop);
             if (success) {
                 ctx.result("Property Created");
@@ -44,6 +53,14 @@ public class PropertyController {
         }
     }
 
+    @OpenApi(summary = "Find properties by parameter", operationId = "findPropertyByParam", path = "/getProperties/{param}/{paramval}", methods = HttpMethod.GET, pathParams = {
+            @OpenApiParam(name = "param", type = String.class, description = "Property field to filter by"),
+            @OpenApiParam(name = "paramval", type = String.class, description = "Value of the property field")
+    }, tags = { "Property" }, responses = {
+            @OpenApiResponse(status = "200", content = { @OpenApiContent(from = Property[].class) }),
+            @OpenApiResponse(status = "404", content = { @OpenApiContent(from = ErrorResponse.class) }),
+            @OpenApiResponse(status = "500", content = { @OpenApiContent(from = ErrorResponse.class) })
+    })
     public void findPropertyByParam(Context ctx) {
         try {
             String param = ctx.pathParam("param");
@@ -65,6 +82,12 @@ public class PropertyController {
         }
     }
 
+    @OpenApi(summary = "Get all properties", operationId = "getAllProperties", path = "/getAllProperties", methods = HttpMethod.GET, tags = {
+            "Property" }, responses = {
+                    @OpenApiResponse(status = "200", content = { @OpenApiContent(from = Property[].class) }),
+                    @OpenApiResponse(status = "404", content = { @OpenApiContent(from = ErrorResponse.class) }),
+                    @OpenApiResponse(status = "500", content = { @OpenApiContent(from = ErrorResponse.class) })
+            })
     public void getAllProperties(Context ctx) {
         try {
             List<Property> properties = propertydao.getAllProps();
@@ -83,10 +106,52 @@ public class PropertyController {
         }
     }
 
+    @OpenApi(summary = "Get properties by multiple query parameters", operationId = "getPropertiesByParams", path = "/getPropertiesByParams", methods = HttpMethod.GET, tags = {
+            "Property" }, responses = {
+                    @OpenApiResponse(status = "200", content = { @OpenApiContent(from = Property[].class) }),
+                    @OpenApiResponse(status = "404", content = { @OpenApiContent(from = ErrorResponse.class) }),
+                    @OpenApiResponse(status = "500", content = { @OpenApiContent(from = ErrorResponse.class) })
+            })
+    public void getPropertiesByParams(Context ctx) {
+        try {
+            var paramsMap = ctx.queryParamMap();
+
+            List<Property> properties = propertydao.getPropByParams(paramsMap);
+
+            if (properties.isEmpty()) {
+                ctx.result("No properties with given query vals found");
+                ctx.status(404);
+            } else {
+                ctx.json(properties);
+                ctx.status(200);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ctx.result("Database error: " + e.getMessage());
+            ctx.status(500);
+        }
+    }
+
+    @OpenApi(summary = "Get properties with field value greater than a given value", operationId = "findPropertiesGreaterThan", path = "/getPropertiesGreaterThan/{param}/{paramVal}", methods = HttpMethod.GET, pathParams = {
+            @OpenApiParam(name = "param", type = String.class, description = "Numeric or date field name"),
+            @OpenApiParam(name = "paramVal", type = String.class, description = "Comparison value")
+    }, tags = { "Property" }, responses = {
+            @OpenApiResponse(status = "200", content = { @OpenApiContent(from = Property[].class) }),
+            @OpenApiResponse(status = "404", content = { @OpenApiContent(from = ErrorResponse.class) }),
+            @OpenApiResponse(status = "500", content = { @OpenApiContent(from = ErrorResponse.class) })
+    })
     public void findPropertiesGreaterThan(Context ctx) {
         findPropertiesGreaterThanLessThan(ctx, true);
     }
 
+    @OpenApi(summary = "Get properties with field value less than a given value", operationId = "findPropertiesLessThan", path = "/getPropertiesLessThan/{param}/{paramVal}", methods = HttpMethod.GET, pathParams = {
+            @OpenApiParam(name = "param", type = String.class, description = "Numeric or date field name"),
+            @OpenApiParam(name = "paramVal", type = String.class, description = "Comparison value")
+    }, tags = { "Property" }, responses = {
+            @OpenApiResponse(status = "200", content = { @OpenApiContent(from = Property[].class) }),
+            @OpenApiResponse(status = "404", content = { @OpenApiContent(from = ErrorResponse.class) }),
+            @OpenApiResponse(status = "500", content = { @OpenApiContent(from = ErrorResponse.class) })
+    })
     public void findPropertiesLessThan(Context ctx) {
         findPropertiesGreaterThanLessThan(ctx, false);
     }
@@ -97,31 +162,41 @@ public class PropertyController {
             String paramVal = ctx.pathParam("paramVal");
 
             List<String> acceptedParams = Arrays.asList(
-                new String[]{"property_id", "download_date", "contract_date", "purchase_price", 
-                             "post_code", "settlement_date", "area"});
+                    new String[] { "property_id", "download_date", "contract_date", "purchase_price",
+                            "post_code", "settlement_date", "area" });
 
             List<Property> properties = new ArrayList<>();
             if (acceptedParams.contains(param)) {
                 properties = propertydao.getPropertiesGreaterThanLessThan(param, paramVal, isGreaterThan);
-            } 
-            this.addResponseToContext(ctx, properties, "No properties for " + param + " greater than {" + paramVal + "} found");
+            }
+            this.addResponseToContext(ctx, properties,
+                    "No properties for " + param + " greater than {" + paramVal + "} found");
         } catch (SQLException e) {
             handleError(e, ctx);
         }
     }
 
-    public void getPropertiesByParams(Context ctx) {
+    @OpenApi(summary = "Get average purchase price for properties by parameter", operationId = "getAvgPurchasePrice", path = "/getAveragePurchasePrice/{param}/{paramval}", methods = HttpMethod.GET, pathParams = {
+            @OpenApiParam(name = "param", type = String.class, description = "Field to filter properties by"),
+            @OpenApiParam(name = "paramval", type = String.class, description = "Value to filter by")
+    }, tags = { "Property" }, responses = {
+            @OpenApiResponse(status = "200", content = { @OpenApiContent(type = "application/json") }),
+            @OpenApiResponse(status = "404", content = { @OpenApiContent(from = ErrorResponse.class) }),
+            @OpenApiResponse(status = "500", content = { @OpenApiContent(from = ErrorResponse.class) })
+    })
+    public void getAvgPurchasePrice(Context ctx) {
         try {
-            // { "property_id": ["0"], "property_cost": ["10000"] }
-            var paramsMap = ctx.queryParamMap();
+            String param = ctx.pathParam("param");
+            String paramval = ctx.pathParam("paramval");
 
-            List<Property> properties = propertydao.getPropByParams(paramsMap);
+            List<Property> properties = propertydao.getPropByParam(param, paramval);
 
+            double averagePurchasePrice = propertydao.getAverageOfField(properties, "purchasePrice");
             if (properties.isEmpty()) {
-                ctx.result("No properties with given query vals found");
+                ctx.result("No properties found");
                 ctx.status(404);
             } else {
-                ctx.json(properties);
+                ctx.json(averagePurchasePrice);
                 ctx.status(200);
             }
         } catch (SQLException e) {
@@ -146,26 +221,4 @@ public class PropertyController {
             ctx.status(200);
         }
     }
-    public void getAvgPurchasePrice(Context ctx) {
-        try {
-            String param = ctx.pathParam("param");
-            String paramval = ctx.pathParam("paramval");
-
-            List<Property> properties = propertydao.getPropByParam(param, paramval);
-
-            double averagePurchasePrice = propertydao.getAverageOfField(properties, "purchasePrice");
-            if (properties.isEmpty()) {
-                ctx.result("No properties found");
-                ctx.status(404);
-            } else {
-                ctx.json(averagePurchasePrice);
-                ctx.status(200);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ctx.result("Database error: " + e.getMessage());
-            ctx.status(500);
-        }
-    }
-
 }
