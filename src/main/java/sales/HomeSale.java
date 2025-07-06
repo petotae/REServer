@@ -1,187 +1,265 @@
 package sales;
 
+/**
+ * HomeSale represents a sale of a home property.
+ * It contains various attributes related to the property and the sale.
+ * This class is used to store and retrieve home sale data.
+ */
 public class HomeSale {
 
-    private long property_id;
-    private String download_date;
-    private String council_name;
-    private long purchase_price;
+    /**
+     * Unique identifier for the property.
+     */
+    private long propertyId;
+    /**
+     * Date when the property data was downloaded.
+     */
+    private String downloadDate;
+    /**
+     * Name of the council where the property is located.
+     */
+    private String councilName;
+    /**
+     * Purchase price of the property.
+     */
+    private long purchasePrice;
+    /**
+     * Address of the property.
+     */
     private String address;
-    private long post_code;
-    private String property_type;
-    private String strata_lot_number;
-    private String property_name;
+    /**
+     * Postcode of the property.
+     */
+    private long postCode;
+    /**
+     * Type of the property.
+     */
+    private String propertyType;
+    /**
+     * Strata lot number if applicable.
+     */
+    private String strataLotNumber;
+    /**
+     * Name of the property, if applicable.
+     */
+    private String propertyName;
+    /**
+     * Area of the property.
+     */
     private double area;
-    private String area_type;
-    private String contract_date;
-    private String settlement_date;
+    /**
+     * Type of area measurement.
+     */
+    private String areaType;
+    /**
+     * Date when the contract for the property was signed.
+     */
+    private String contractDate;
+    /**
+     * Date when the property settlement occurred.
+     */
+    private String settlementDate;
+    /**
+     * Zoning classification of the property.
+     */
     private String zoning;
-    private String nature_of_property;
-    private String primary_purpose;
-    private String legal_description;
+    /**
+     * Nature of the property).
+     */
+    private String natureOfProperty;
+    /**
+     * Primary purpose of the property.
+     */
+    private String primaryPurpose;
+    /**
+     * Legal description of the property.
+     */
+    private String legalDescription;
 
-    // Full constructor
-    public HomeSale(long property_id, String download_date, String council_name, long purchase_price, String address,
-                    long post_code, String property_type, String strata_lot_number, String property_name, double area,
-                    String area_type, String contract_date, String settlement_date, String zoning,
-                    String nature_of_property, String primary_purpose, String legal_description) {
-        this.property_id = property_id;
-        this.download_date = download_date;
-        this.council_name = council_name;
-        this.purchase_price = purchase_price;
+    /**
+     * Constructor for HomeSale
+     * @param propertyId
+     * @param downloadDate
+     * @param councilName
+     * @param purchasePrice
+     * @param address
+     * @param postCode
+     * @param propertyType
+     * @param strataLotNumber
+     * @param propertyName
+     * @param area
+     * @param areaType
+     * @param contractDate
+     * @param settlementDate
+     * @param zoning
+     * @param natureOfProperty
+     * @param primaryPurpose
+     * @param legalDescription
+     */
+    public HomeSale(final long propertyId, final String downloadDate, final String councilName, final long purchasePrice, final String address,
+                    final long postCode, final String propertyType, final String strataLotNumber, final String propertyName, final double area,
+                    final String areaType, final String contractDate, final String settlementDate, final String zoning,
+                    final String natureOfProperty, final String primaryPurpose, final String legalDescription) {
+        this.propertyId = propertyId;
+        this.downloadDate = downloadDate;
+        this.councilName = councilName;
+        this.purchasePrice = purchasePrice;
         this.address = address;
-        this.post_code = post_code;
-        this.property_type = property_type;
-        this.strata_lot_number = strata_lot_number;
-        this.property_name = property_name;
+        this.postCode = postCode;
+        this.propertyType = propertyType;
+        this.strataLotNumber = strataLotNumber;
+        this.propertyName = propertyName;
         this.area = area;
-        this.area_type = area_type;
-        this.contract_date = contract_date;
-        this.settlement_date = settlement_date;
+        this.areaType = areaType;
+        this.contractDate = contractDate;
+        this.settlementDate = settlementDate;
         this.zoning = zoning;
-        this.nature_of_property = nature_of_property;
-        this.primary_purpose = primary_purpose;
-        this.legal_description = legal_description;
+        this.natureOfProperty = natureOfProperty;
+        this.primaryPurpose = primaryPurpose;
+        this.legalDescription = legalDescription;
     }
 
-    // No-arg constructor for JSON
+    /**
+     * Default constructor for HomeSale.
+     * This is required for frameworks that require a no-argument constructor.
+     */
     public HomeSale() {}
 
     // Getters and setters
 
-    public long getProperty_id() {
-        return property_id;
+    public long getPropertyId() {
+        return propertyId;
     }
 
-    public void setProperty_id(long property_id) {
-        this.property_id = property_id;
+    public void setPropertyId(final long propertyId) {
+        this.propertyId = propertyId;
     }
 
-    public String getDownload_date() {
-        return download_date;
+    public String getDownloadDate() {
+        return downloadDate;
     }
 
-    public void setDownload_date(String download_date) {
-        this.download_date = download_date;
+    public void setDownloadDate(final String downloadDate) {
+        this.downloadDate = downloadDate;
     }
 
-    public String getCouncil_name() {
-        return council_name;
+    public String getCouncilName() {
+        return councilName;
     }
 
-    public void setCouncil_name(String council_name) {
-        this.council_name = council_name;
+    public void setCouncilName(final String councilName) {
+        this.councilName = councilName;
     }
 
-    public long getPurchase_price() {
-        return purchase_price;
+    public long getPurchasePrice() {
+        return purchasePrice;
     }
 
-    public void setPurchase_price(long purchase_price) {
-        this.purchase_price = purchase_price;
+    public void setPurchasePrice(final long purchasePrice) {
+        this.purchasePrice = purchasePrice;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(final String address) {
         this.address = address;
     }
 
-    public long getPost_code() {
-        return post_code;
+    public long getPostCode() {
+        return postCode;
     }
 
-    public void setPost_code(long post_code) {
-        this.post_code = post_code;
+    public void setPostCode(final long postCode) {
+        this.postCode = postCode;
     }
 
-    public String getProperty_type() {
-        return property_type;
+    public String getPropertyType() {
+        return propertyType;
     }
 
-    public void setProperty_type(String property_type) {
-        this.property_type = property_type;
+    public void setPropertyType(final String propertyType) {
+        this.propertyType = propertyType;
     }
 
-    public String getStrata_lot_number() {
-        return strata_lot_number;
+    public String getStrataLotNumber() {
+        return strataLotNumber;
     }
 
-    public void setStrata_lot_number(String strata_lot_number) {
-        this.strata_lot_number = strata_lot_number;
+    public void setStrataLotNumber(final String strataLotNumber) {
+        this.strataLotNumber = strataLotNumber;
     }
 
-    public String getProperty_name() {
-        return property_name;
+    public String getPropertyName() {
+        return propertyName;
     }
 
-    public void setProperty_name(String property_name) {
-        this.property_name = property_name;
+    public void setPropertyName(final String propertyName) {
+        this.propertyName = propertyName;
     }
 
     public double getArea() {
         return area;
     }
 
-    public void setArea(double area) {
+    public void setArea(final double area) {
         this.area = area;
     }
 
-    public String getArea_type() {
-        return area_type;
+    public String getAreaType() {
+        return areaType;
     }
 
-    public void setArea_type(String area_type) {
-        this.area_type = area_type;
+    public void setAreaType(final String areaType) {
+        this.areaType = areaType;
     }
 
-    public String getContract_date() {
-        return contract_date;
+    public String getContractDate() {
+        return contractDate;
     }
 
-    public void setContract_date(String contract_date) {
-        this.contract_date = contract_date;
+    public void setContractDate(final String contractDate) {
+        this.contractDate = contractDate;
     }
 
-    public String getSettlement_date() {
-        return settlement_date;
+    public String getSettlementDate() {
+        return settlementDate;
     }
 
-    public void setSettlement_date(String settlement_date) {
-        this.settlement_date = settlement_date;
+    public void setSettlementDate(final String settlementDate) {
+        this.settlementDate = settlementDate;
     }
 
     public String getZoning() {
         return zoning;
     }
 
-    public void setZoning(String zoning) {
+    public void setZoning(final String zoning) {
         this.zoning = zoning;
     }
 
-    public String getNature_of_property() {
-        return nature_of_property;
+    public String getNatureOfProperty() {
+        return natureOfProperty;
     }
 
-    public void setNature_of_property(String nature_of_property) {
-        this.nature_of_property = nature_of_property;
+    public void setNatureOfProperty(final String natureOfProperty) {
+        this.natureOfProperty = natureOfProperty;
     }
 
-    public String getPrimary_purpose() {
-        return primary_purpose;
+    public String getPrimaryPurpose() {
+        return primaryPurpose;
     }
 
-    public void setPrimary_purpose(String primary_purpose) {
-        this.primary_purpose = primary_purpose;
+    public void setPrimaryPurpose(final String primaryPurpose) {
+        this.primaryPurpose = primaryPurpose;
     }
 
-    public String getLegal_description() {
-        return legal_description;
+    public String getLegalDescription() {
+        return legalDescription;
     }
 
-    public void setLegal_description(String legal_description) {
-        this.legal_description = legal_description;
+    public void setLegalDescription(final String legalDescription) {
+        this.legalDescription = legalDescription;
     }
 }

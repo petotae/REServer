@@ -5,18 +5,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
+/**
+ * Controller to create properties and get information about properties in the database
+ */
 public class PropertyController {
-
-    public final Logger log = LoggerFactory.getLogger(PropertyController.class);
     private final PropertyDAO propertydao = new PropertyDAO();
 
-    public void registerRoutes(Javalin app) {
+    /**
+     * Set the endpoints to post data to the database or get data from the database
+     * @param app The current Javalin app
+     */
+    public void registerRoutes(final Javalin app) {
         app.post("/createProperty", this::createProperty);
         app.get("/getProperties/{param}/{paramVal}", this::findPropertyByParam);
         app.get("/getAllProperties", this::getAllProperties);
@@ -26,12 +28,16 @@ public class PropertyController {
         app.get("/getAveragePurchasePrice/{param}/{paramval}", this::getAvgPurchasePrice);
     }
 
-    public void createProperty(Context ctx) {
+    /**
+     * Create a property from information given in the HTTP json body and store it in the database
+     * @param ctx The HTTP request
+     */
+    public void createProperty(final Context ctx) {
         try {
             // Extract HomeSale from request body
-            Property prop = ctx.bodyValidator(Property.class).get();
+            final Property prop = ctx.bodyValidator(Property.class).get();
             // store new sale in database
-            boolean success = propertydao.createProp(prop);
+            final boolean success = propertydao.createProp(prop);
             if (success) {
                 ctx.result("Property Created");
                 ctx.status(201);
@@ -44,128 +50,142 @@ public class PropertyController {
         }
     }
 
-    public void findPropertyByParam(Context ctx) {
+    /**
+     * Gets all properties where the specified parameter matches the specified value
+     * @param ctx The HTTP request
+     */
+    public void findPropertyByParam(final Context ctx) {
         try {
-            String param = ctx.pathParam("param");
-            String paramval = ctx.pathParam("paramval");
+            final String param = ctx.pathParam("param");
+            final String paramVal = ctx.pathParam("paramVal");
 
-            List<Property> properties = propertydao.getPropByParam(param, paramval);
+            final List<Property> properties = propertydao.getPropByParam(param, paramVal);
 
-            if (properties.isEmpty()) {
-                ctx.result("No properties for " + param + " with {" + paramval + "} found");
-                ctx.status(404);
-            } else {
-                ctx.json(properties);
-                ctx.status(200);
-            }
+            this.addResponseToContext(ctx, properties, properties, "No properties for " + 
+                                      param + " with {" + paramVal + "} found");
         } catch (SQLException e) {
-            e.printStackTrace();
-            ctx.result("Database error: " + e.getMessage());
-            ctx.status(500);
+            this.handleError(e, ctx);
         }
     }
 
-    public void getAllProperties(Context ctx) {
+    /**
+     * Gets all properties in the database
+     * @param ctx The HTTP request
+     */
+    public void getAllProperties(final Context ctx) {
         try {
-            List<Property> properties = propertydao.getAllProps();
-
-            if (properties.isEmpty()) {
-                ctx.result("No properties found");
-                ctx.status(404);
-            } else {
-                ctx.json(properties);
-                ctx.status(200);
-            }
+            final List<Property> properties = propertydao.getAllProps();
+            this.addResponseToContext(ctx, properties, properties, "No properties found");
         } catch (SQLException e) {
-            e.printStackTrace();
-            ctx.result("Database error: " + e.getMessage());
-            ctx.status(500);
+            this.handleError(e, ctx);
         }
     }
 
-    public void findPropertiesGreaterThan(Context ctx) {
+    /**
+     * Gets all properties where the specified parameter's value is greater than the specified value
+     * @param ctx The HTTP request
+     */
+    public void findPropertiesGreaterThan(final Context ctx) {
         findPropertiesGreaterThanLessThan(ctx, true);
     }
 
-    public void findPropertiesLessThan(Context ctx) {
+    /**
+     * Gets all properties where the specified parameter's value is less than the specified value
+     * @param ctx The HTTP request
+     */
+    public void findPropertiesLessThan(final Context ctx) {
         findPropertiesGreaterThanLessThan(ctx, false);
     }
 
-    private void findPropertiesGreaterThanLessThan(Context ctx, Boolean isGreaterThan) {
+    /**
+     * Gets all properties where the specified parameter's value is greater than or less than 
+     * the specified value
+     * @param ctx The HTTP request
+     * @param isGreaterThan Whether the query should return records where the parameter's value is 
+     *                      greater than the specified value
+     */
+    private void findPropertiesGreaterThanLessThan(final Context ctx, final Boolean isGreaterThan) {
         try {
-            String param = ctx.pathParam("param");
-            String paramVal = ctx.pathParam("paramVal");
+            final String param = ctx.pathParam("param");
+            final String paramVal = ctx.pathParam("paramVal");
 
-            List<String> acceptedParams = Arrays.asList(
-                new String[]{"property_id", "download_date", "contract_date", "purchase_price", 
-                             "post_code", "settlement_date", "area"});
+            final List<String> acceptedParams = Arrays.asList("property_id", "download_date", "contract_date", "purchase_price",
+                             "post_code", "settlement_date", "area");
 
             List<Property> properties = new ArrayList<>();
             if (acceptedParams.contains(param)) {
                 properties = propertydao.getPropertiesGreaterThanLessThan(param, paramVal, isGreaterThan);
             } 
-            this.addResponseToContext(ctx, properties, "No properties for " + param + " greater than {" + paramVal + "} found");
+            this.addResponseToContext(ctx, properties, properties, "No properties for " + param + " greater than {" + paramVal + "} found");
         } catch (SQLException e) {
             handleError(e, ctx);
         }
     }
 
-    public void getPropertiesByParams(Context ctx) {
+    /**
+     * Get all properties where all the specified parameters match the specified values
+     * @param ctx The HTTP request
+     */
+    public void getPropertiesByParams(final Context ctx) {
         try {
             // { "property_id": ["0"], "property_cost": ["10000"] }
-            var paramsMap = ctx.queryParamMap();
+            final var paramsMap = ctx.queryParamMap();
 
-            List<Property> properties = propertydao.getPropByParams(paramsMap);
+            final List<Property> properties = propertydao.getPropByParams(paramsMap);
 
-            if (properties.isEmpty()) {
-                ctx.result("No properties with given query vals found");
-                ctx.status(404);
-            } else {
-                ctx.json(properties);
-                ctx.status(200);
-            }
+            this.addResponseToContext(ctx, properties, properties, "No properties with given query vals found");
         } catch (SQLException e) {
-            e.printStackTrace();
-            ctx.result("Database error: " + e.getMessage());
-            ctx.status(500);
+            this.handleError(e, ctx);
         }
     }
 
-    private void handleError(SQLException e, Context ctx) {
-        e.printStackTrace();
-        ctx.result("Database error: " + e.getMessage());
-        ctx.status(500);
+    /**
+     * Gets the average purchase price of properties where the specified parameter has 
+     * the specified value
+     * @param ctx The HTTP request
+     */
+    public void getAvgPurchasePrice(final Context ctx) {
+        try {
+            final String param = ctx.pathParam("param");
+            final String paramVal = ctx.pathParam("paramval");
+
+            final List<Property> properties = propertydao.getPropByParam(param, paramVal);
+
+            double averagePurchasePrice = propertydao.getAverageOfField(properties, "purchasePrice");
+            this.addResponseToContext(ctx, properties, averagePurchasePrice, "No properties found");
+        } catch (SQLException e) {
+            this.handleError(e, ctx);
+        }
     }
 
-    private void addResponseToContext(Context ctx, List<Property> properties, String messageIfNoProperties) {
+    /**
+     * Adds a response to the HTTP response based on the properties returned by the query
+     * @param ctx The HTTP request
+     * @param properties The records returned by the SQL query
+     * @param messageIfNoProperties The message to be sent if the query returned records 
+     * @param messageIfNoProperties The message to be sent if no records were returned by 
+     *                              the query
+     */
+    private void addResponseToContext(final Context ctx, final List<Property> properties, 
+                                      final Object messageIfProperties,
+                                      final String messageIfNoProperties) {
         if (properties.isEmpty()) {
             ctx.result(messageIfNoProperties);
             ctx.status(404);
         } else {
-            ctx.json(properties);
+            ctx.json(messageIfProperties);
             ctx.status(200);
         }
     }
-    public void getAvgPurchasePrice(Context ctx) {
-        try {
-            String param = ctx.pathParam("param");
-            String paramval = ctx.pathParam("paramval");
 
-            List<Property> properties = propertydao.getPropByParam(param, paramval);
-
-            double averagePurchasePrice = propertydao.getAverageOfField(properties, "purchasePrice");
-            if (properties.isEmpty()) {
-                ctx.result("No properties found");
-                ctx.status(404);
-            } else {
-                ctx.json(averagePurchasePrice);
-                ctx.status(200);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ctx.result("Database error: " + e.getMessage());
-            ctx.status(500);
-        }
+    /**
+     * Handles SQLException errors
+     * @param e The thrown error
+     * @param ctx The HTTP request
+     */
+    private void handleError(final SQLException e, final Context ctx) {
+        e.printStackTrace();
+        ctx.result("Database error: " + e.getMessage());
+        ctx.status(500);
     }
-
 }
