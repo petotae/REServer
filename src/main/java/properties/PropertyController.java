@@ -53,8 +53,8 @@ public class PropertyController {
             final boolean success = propertydao.createProp(prop);
 
             // update access data
-            propertydao.UpdateAccessData("property_id", prop.getPropertyId());
-            propertydao.UpdateAccessData("post_code", prop.getPostCode());
+            propertydao.updateAccessData("property_id", prop.getPropertyId().toString());
+            propertydao.updateAccessData("post_code", prop.getPostCode().toString());
 
             if (success) {
                 ctx.result("Property Created");
@@ -92,7 +92,7 @@ public class PropertyController {
             if (paramVal == "property_id" || paramVal == "post_code") {
                 for (Property property : properties) {
                     String val = property.get(paramVal).toString();
-                    propertydao.UpdateAccessData(param, val);
+                    propertydao.updateAccessData(param, val);
                 }
             }
 
@@ -146,17 +146,17 @@ public class PropertyController {
             if (paramsMap.containsKey("property_id") && paramsMap.containsKey("postal_code")) {
                 for (Property property : properties) {
                     String prop_val = property.get("property_id").toString();
-                    propertydao.UpdateAccessData("property_id", prop_val);
+                    propertydao.updateAccessData("property_id", prop_val);
                     String post_val = property.get("postal_code").toString();
-                    propertydao.UpdateAccessData("postal_code", post_val);
+                    propertydao.updateAccessData("postal_code", post_val);
                 }
             } else if (paramsMap.containsKey("property_id")) {
                 for (Property property : properties) {
-                    propertydao.UpdateAccessData("property_id", property.getPropertyId());
+                    propertydao.updateAccessData("property_id", property.getPropertyId().toString());
                 }
             } else if (paramsMap.containsKey("postal_code")) {
                 for (Property property : properties) {
-                    propertydao.UpdateAccessData("postal_code", property.getPostCode());
+                    propertydao.updateAccessData("postal_code", property.getPostCode().toString());
                 }
             }
 
