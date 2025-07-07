@@ -78,8 +78,6 @@ public class PropertyDAO {
     private List<Property> getPropertiesFromDatabase(final String sql, final String column, final Object paramVal) throws SQLException {
         final List<Property> results = new ArrayList<>();
 
-        updateAccessDataTables(sql);
-
         try {
             final Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
             final PreparedStatement stmt = conn.prepareStatement(sql + LIMIT_RECORDS);
@@ -125,23 +123,25 @@ public class PropertyDAO {
         return results;
     }
 
-    private void updateAccessDataTables(final String sql) {
-        // Need new 2 tables "access property_id table" with two columns: "property_id" "count" 
-        // and "access post_code table" with two columns: "post_code" "count"
-        // You can't add post_code access #s to every property with that post code
-        if (isSearchingOnAttribute(sql, "property_id")) {
-            // If property_id exists in "access property_id table"
-                // count++
-            // Else
-                // add property_id to table w/ count 1
-        } else if (isSearchingOnAttribute(sql, "post_code")) {
-            // Same idea as above
+    private void updateAccessData(final String param, final String paramVal) throws SQLException {
+        Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+        String sqlGet = String.format("SELECT access_count FROM nsw_property_data_access_data WHERE attribute_type = %s AND value = %s", param, paramVal);
+        PreparedStatement stmtGet = conn.prepareStatement(sqlGet);
+        final ResultSet resSet = stmtGet.executeQuery();
+
+        String sqlPost = "";
+        int count = 0;
+        while (resSet.next()) {
+            sqlPost = String.format("UPDATE nsw_property_data_access_data SET access_count = %d WHERE attribute_type = %s AND value = %s", resSet.getLong("access_count"), param, paramVal);
+            count++;
         }
+        if (count == 0) {
+            sqlPost = String.format("INSERT INTO nsw_property_data_access_data (attribute_type, value, access_count) VALUES (%s, %s, 1)", param, paramVal);
+        }
+        PreparedStatement stmtPost = conn.prepareStatement(sqlPost);
+        stmtPost.executeQuery();
     }
 
-    private boolean isSearchingOnAttribute(final String sql, final String attribute) {
-        return sql.contains("WHERE " + attribute) || sql.contains("AND " + attribute) || sql.contains("OR " + attribute);
-    }
 
     public List<Property> getAllProps() throws SQLException {
         final String sql = "SELECT * FROM nsw_property_data";
@@ -284,19 +284,27 @@ public class PropertyDAO {
         }
     }
 
-    public int getParamAccessCount(String param, String paramVal) throws SQLException, IllegalArgumentException {
-        String sql = "SELECT count FROM ";
-        switch (param) {
-            case "property_id":
-                sql += "nsw_property_id_access_data";
-                break;
-            case "post_code":
-                sql += "nsw_post_code_access_data";
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
+    // public int getParamAccessCount(String param, String paramVal) throws SQLException, IllegalArgumentException {
+    //     String sql = "SELECT access_count FROM nsw_property_data_access_data";
+    //     // switch (param) {
+    //     //     case "property_id":
+    //     //         sql += "nsw_property_id_access_data";
+    //     //         break;
+    //     //     case "post_code":
+    //     //         sql += "nsw_post_code_access_data";
+    //     //         break;
+    //     //     default:
+    //     //         throw new IllegalArgumentException();
+    //     // }
+
+    //     // sql += String.format(" WHERE %s = %s;", param, paramVal);
+
+    //     // try {
+    //     //     Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+    //     //     PreparedStatement stmt = conn.prepareStatement(sql);
+    //     //     return stmt.executeQuery();
+    //     // } catch (SQLException)
+    // }
 
     private void debug(final String msg) {
         if (logger.isDebugEnabled()) {
