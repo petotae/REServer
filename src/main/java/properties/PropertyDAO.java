@@ -125,21 +125,27 @@ public class PropertyDAO {
 
     public void updateAccessData(final String param, final String paramVal) throws SQLException {
         Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-        String sqlGet = String.format("SELECT access_count FROM nsw_property_data_access_data WHERE attribute_type = %s AND value = %s", param, paramVal);
+        String sqlGet = String.format("SELECT * FROM nsw_property_data_access_data WHERE attribute_type = \'%s\' AND value = %s;", param, paramVal);
         PreparedStatement stmtGet = conn.prepareStatement(sqlGet);
         final ResultSet resSet = stmtGet.executeQuery();
 
         String sqlPost = "";
         int count = 0;
         while (resSet.next()) {
-            sqlPost = String.format("UPDATE nsw_property_data_access_data SET access_count = %d WHERE attribute_type = %s AND value = %s", resSet.getLong("access_count"), param, paramVal);
+            sqlPost = String.format("UPDATE nsw_property_data_access_data SET access_count = %d WHERE attribute_type = '%s' AND value = %s", resSet.getLong("access_count") + 1, param, paramVal);
             count++;
         }
         if (count == 0) {
-            sqlPost = String.format("INSERT INTO nsw_property_data_access_data (attribute_type, value, access_count) VALUES (%s, %s, 1)", param, paramVal);
+            sqlPost = String.format("INSERT INTO nsw_property_data_access_data (attribute_type, value, access_count) VALUES ('%s', %s, 1)", param, paramVal);
         }
         PreparedStatement stmtPost = conn.prepareStatement(sqlPost);
-        stmtPost.executeQuery();
+        try {
+            stmtPost.executeQuery();
+        } catch (SQLException e) {
+            if (!e.getMessage().contains("No results were returned by the query")) {
+                throw new SQLException();
+            }
+        }
     }
 
 

@@ -1,5 +1,6 @@
 package properties;
 
+import properties.util.CaseConverter;
 import properties.util.ErrorResponse;
 
 import java.sql.SQLException;
@@ -89,11 +90,8 @@ public class PropertyController {
             final List<Property> properties = propertydao.getPropByParam(param, paramVal);
 
             // update access data
-            if (paramVal == "property_id" || paramVal == "post_code") {
-                for (Property property : properties) {
-                    String val = property.get(paramVal).toString();
-                    propertydao.updateAccessData(param, val);
-                }
+            if (param.equals("property_id") || param.equals("post_code")) {
+                propertydao.updateAccessData(param, paramVal);
             }
 
             this.addResponseToContext(ctx, properties, properties, "No properties for " +
@@ -143,20 +141,20 @@ public class PropertyController {
             List<Property> properties = propertydao.getPropByParams(paramsMap);
 
             // update access data
-            if (paramsMap.containsKey("property_id") && paramsMap.containsKey("postal_code")) {
+            if (paramsMap.containsKey("property_id") && paramsMap.containsKey("post_code")) {
                 for (Property property : properties) {
                     String prop_val = property.get("property_id").toString();
                     propertydao.updateAccessData("property_id", prop_val);
-                    String post_val = property.get("postal_code").toString();
-                    propertydao.updateAccessData("postal_code", post_val);
+                    String post_val = property.get("post_code").toString();
+                    propertydao.updateAccessData("post_code", post_val);
                 }
             } else if (paramsMap.containsKey("property_id")) {
                 for (Property property : properties) {
                     propertydao.updateAccessData("property_id", property.getPropertyId().toString());
                 }
-            } else if (paramsMap.containsKey("postal_code")) {
+            } else if (paramsMap.containsKey("post_code")) {
                 for (Property property : properties) {
-                    propertydao.updateAccessData("postal_code", property.getPostCode().toString());
+                    propertydao.updateAccessData("post_code", property.getPostCode().toString());
                 }
             }
 
