@@ -78,6 +78,8 @@ public class PropertyDAO {
     private List<Property> getPropertiesFromDatabase(final String sql, final String column, final Object paramVal) throws SQLException {
         final List<Property> results = new ArrayList<>();
 
+        updateAccessDataTables(sql);
+
         try {
             final Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
             final PreparedStatement stmt = conn.prepareStatement(sql + LIMIT_RECORDS);
@@ -121,6 +123,24 @@ public class PropertyDAO {
             this.debug("Database error: " + e.getMessage());
         }
         return results;
+    }
+
+    private void updateAccessDataTables(final String sql) {
+        // Need new 2 tables "access property_id table" with two columns: "property_id" "count" 
+        // and "access post_code table" with two columns: "post_code" "count"
+        // You can't add post_code access #s to every property with that post code
+        if (isSearchingOnAttribute(sql, "property_id")) {
+            // If property_id exists in "access property_id table"
+                // count++
+            // Else
+                // add property_id to table w/ count 1
+        } else if (isSearchingOnAttribute(sql, "post_code")) {
+            // Same idea as above
+        }
+    }
+
+    private boolean isSearchingOnAttribute(final String sql, final String attribute) {
+        return sql.contains("WHERE " + attribute) || sql.contains("AND " + attribute) || sql.contains("OR " + attribute);
     }
 
     public List<Property> getAllProps() throws SQLException {
@@ -261,6 +281,20 @@ public class PropertyDAO {
                 }
                 return results;
             }
+        }
+    }
+
+    public int getParamAccessCount(String param, String paramVal) throws SQLException, IllegalArgumentException {
+        String sql = "SELECT count FROM ";
+        switch (param) {
+            case "property_id":
+                sql += "nsw_property_id_access_data";
+                break;
+            case "post_code":
+                sql += "nsw_post_code_access_data";
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
