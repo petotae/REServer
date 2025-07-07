@@ -1,6 +1,8 @@
 package properties;
 
+import properties.util.CaseConverter;
 import properties.util.ErrorResponse;
+import properties.util.CaseConverter;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -51,6 +53,11 @@ public class PropertyController {
         try {
             final Property prop = ctx.bodyValidator(Property.class).get();
             final boolean success = propertydao.createProp(prop);
+
+            // update access data
+            propertydao.updateAccessData("property_id", prop.getPropertyId().toString());
+            propertydao.updateAccessData("post_code", prop.getPostCode().toString());
+
             if (success) {
                 ctx.result("Property Created");
                 ctx.status(201);
@@ -82,6 +89,11 @@ public class PropertyController {
             final String paramVal = ctx.pathParam("paramVal");
 
             final List<Property> properties = propertydao.getPropByParam(param, paramVal);
+
+            // update access data
+            if (param.equals("property_id") || param.equals("post_code")) {
+                propertydao.updateAccessData(param, paramVal);
+            }
 
             this.addResponseToContext(ctx, properties, properties, "No properties for " +
                     param + " with {" + paramVal + "} found");
@@ -128,6 +140,24 @@ public class PropertyController {
             var paramsMap = ctx.queryParamMap();
 
             List<Property> properties = propertydao.getPropByParams(paramsMap);
+
+            // update access data
+            if (paramsMap.containsKey("property_id") && paramsMap.containsKey("post_code")) {
+                for (Property property : properties) {
+                    String prop_val = property.get("property_id").toString();
+                    propertydao.updateAccessData("property_id", prop_val);
+                    String post_val = property.get("post_code").toString();
+                    propertydao.updateAccessData("post_code", post_val);
+                }
+            } else if (paramsMap.containsKey("property_id")) {
+                for (Property property : properties) {
+                    propertydao.updateAccessData("property_id", property.getPropertyId().toString());
+                }
+            } else if (paramsMap.containsKey("post_code")) {
+                for (Property property : properties) {
+                    propertydao.updateAccessData("post_code", property.getPostCode().toString());
+                }
+            }
 
             if (properties.isEmpty()) {
                 ctx.result("No properties with given query vals found");
