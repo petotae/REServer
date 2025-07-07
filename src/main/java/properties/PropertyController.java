@@ -1,6 +1,7 @@
 package properties;
 
 import properties.util.ErrorResponse;
+import properties.util.CaseConverter;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -89,9 +90,10 @@ public class PropertyController {
             final List<Property> properties = propertydao.getPropByParam(param, paramVal);
 
             // update access data
-            if (paramVal == "property_id" || paramVal == "post_code") {
+            if (param == "property_id" || param == "post_code") {
                 for (Property property : properties) {
-                    String val = property.get(paramVal).toString();
+                    String paramName = CaseConverter.camelToSnake(param);
+                    String val = property.get(paramName).toString();
                     propertydao.updateAccessData(param, val);
                 }
             }
@@ -145,10 +147,8 @@ public class PropertyController {
             // update access data
             if (paramsMap.containsKey("property_id") && paramsMap.containsKey("postal_code")) {
                 for (Property property : properties) {
-                    String prop_val = property.get("property_id").toString();
-                    propertydao.updateAccessData("property_id", prop_val);
-                    String post_val = property.get("postal_code").toString();
-                    propertydao.updateAccessData("postal_code", post_val);
+                    propertydao.updateAccessData("property_id", property.getPropertyId().toString());
+                    propertydao.updateAccessData("postal_code", property.getPostCode().toString());
                 }
             } else if (paramsMap.containsKey("property_id")) {
                 for (Property property : properties) {
