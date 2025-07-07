@@ -2,6 +2,7 @@ package properties;
 
 import properties.util.CaseConverter;
 import properties.util.ErrorResponse;
+import properties.util.CaseConverter;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
