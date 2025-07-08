@@ -9,14 +9,28 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
 import org.apache.logging.log4j.LogManager;
+
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoException;
+import com.mongodb.ServerApi;
+import com.mongodb.ServerApiVersion;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 
 
 public class PropertyDAO {
-    private static final String JDBC_URL = "jdbc:postgresql://aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?sslmode=require";
-    private static final String JDBC_USER = "postgres.jnghzszlarsaxxhiavcv";
-    private static final String JDBC_PASSWORD = "iangortoncsw4530";
-    private static final String LIMIT_RECORDS = " LIMIT 100"; // Only show first 100 properties matching query
+    // private static final String JDBC_URL = "jdbc:postgresql://aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?sslmode=require";
+    // private static final String JDBC_USER = "postgres.jnghzszlarsaxxhiavcv";
+    // private static final String JDBC_PASSWORD = "iangortoncsw4530";
+
+    // private static final String LIMIT_RECORDS = " LIMIT 100"; // Only show first 100 properties matching query
     private static final List<String> LONG_ATTRIBUTES = Arrays
             .asList("property_id", "purchase_price", "post_code");
     private static final List<String> DOUBLE_ATTRIBUTES = Arrays.asList("area");
@@ -24,6 +38,7 @@ public class PropertyDAO {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     Logger logger = LogManager.getLogger(PropertyDAO.class.getName());
+
 
     public boolean createProp(final Property property) throws SQLException {
         final Map<String, Object> props = MAPPER.convertValue(
@@ -43,16 +58,52 @@ public class PropertyDAO {
 
         final String sql = "INSERT INTO nsw_property_data (" + columnList + ") VALUES (" + placeholders + ")";
 
-        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            for (final PropertyDataField f : fields) {
-                final String propName = CaseConverter.snakeToCamel(f.name().toLowerCase());
-                final Object value = props.get(propName);
-                stmt.setObject(f.getIndex(), value);
-            }
+        for (int i = 0; i < fields.length; i++) {
+            PropertyDataField f = 
+            Document insertDoc = new Document(CaseConverter.camelToSnake(f.name().toLowerCase()), )
+        }
+        // Document insertDoc = new Document("property_id",  "download_date", "council_name", "purchase_price", "address", "post_code", "property_type", "strata_lot_number",
+        //                 "property_name", "area", "area_type", "contract_date", "settlement_date", "zoning", "nature_of_property", "primary_purpose", "legal_description");
 
-            return stmt.executeUpdate() > 0;
+        // MongoCollection<Document> collection = this.getCollection();
+        
+        // PreparedStatement stmt = getCollection(sql);
+
+        for (final PropertyDataField f : fields) {
+            final String propName = CaseConverter.snakeToCamel(f.name().toLowerCase());
+            final Object value = props.get(propName);
+            stmt.setObject(f.getIndex(), value);
+        }
+
+        return stmt.executeUpdate() > 0;
+    }
+
+    private MongoCollection<Document> getCollection() throws SQLException {
+        // java.util.Properties p = new java.util.Properties();
+        // p.setProperty("database", "<databaseName>");
+        // return DriverManager.getConnection("<connectionString>", p);
+
+
+        // Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+        // PreparedStatement stmt = conn.prepareStatement(sql);
+        // return stmt;
+
+        String uri = "mongodb+srv://vspillai02:cs4530exercise1@cs4530exercise1.a7aa12o.mongodb.net/?retryWrites=true&w=majority&appName=cs4530exercise1";
+        ServerApi serverApi = ServerApi.builder()
+            .version(ServerApiVersion.V1)
+            .build();
+        final MongoClientSettings settings = MongoClientSettings.builder()
+            .applyConnectionString(new ConnectionString(uri))
+            .serverApi(serverApi)
+            .build();
+
+        try {
+            MongoClient mongoClient = MongoClients.create(settings);
+            final MongoDatabase database = mongoClient.getDatabase("homesale");
+            return database.getCollection("sales");
+        } catch (MongoException e) {
+            throw new MongoException("Failed to connect to MongoDB", e);
         }
     }
 
@@ -79,8 +130,9 @@ public class PropertyDAO {
         final List<Property> results = new ArrayList<>();
 
         try {
-            final Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-            final PreparedStatement stmt = conn.prepareStatement(sql + LIMIT_RECORDS);
+            MongoCollection<Document> collection = this.getCollection();
+            // final PreparedStatement stmt = this.getConnection(sql + LIMIT_RECORDS);
+            
             if (column != null) {
                 if (LONG_ATTRIBUTES.contains(column)) {
                     // parse the incoming String (e.g. "1234") to long
@@ -124,58 +176,41 @@ public class PropertyDAO {
     }
 
     public void updateAccessData(final String param, final String paramVal) throws SQLException {
-        Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-        String sqlGet = String.format("SELECT * FROM nsw_property_data_access_data WHERE attribute_type = \'%s\' AND value = %s;", param, paramVal);
-        PreparedStatement stmtGet = conn.prepareStatement(sqlGet);
-        final ResultSet resSet = stmtGet.executeQuery();
+        // String sqlGet = String.format("SELECT * FROM nsw_property_data_access_data WHERE attribute_type = \'%s\' AND value = %s;", param, paramVal);
+        
+        // MongoCollection<Document> collection = this.getCollection();
+        // final PreparedStatement stmtGet = this.getConnection(sqlGet);
+        // final ResultSet resSet = stmtGet.executeQuery();
 
-        String sqlPost = "";
-        int count = 0;
-        while (resSet.next()) {
-            sqlPost = String.format("UPDATE nsw_property_data_access_data SET access_count = %d WHERE attribute_type = '%s' AND value = %s", resSet.getLong("access_count") + 1, param, paramVal);
-            count++;
-        }
-        if (count == 0) {
-            sqlPost = String.format("INSERT INTO nsw_property_data_access_data (attribute_type, value, access_count) VALUES ('%s', %s, 1)", param, paramVal);
-        }
-        PreparedStatement stmtPost = conn.prepareStatement(sqlPost);
-        try {
-            stmtPost.executeQuery();
-        } catch (SQLException e) {
-            if (!e.getMessage().contains("No results were returned by the query")) {
-                throw new SQLException();
-            }
-        }
+        // String sqlPost = "";
+        // int count = 0;
+        // while (resSet.next()) {
+        //     sqlPost = String.format("UPDATE nsw_property_data_access_data SET access_count = %d WHERE attribute_type = '%s' AND value = %s", resSet.getLong("access_count") + 1, param, paramVal);
+        //     count++;
+        // }
+        // if (count == 0) {
+        //     sqlPost = String.format("INSERT INTO nsw_property_data_access_data (attribute_type, value, access_count) VALUES ('%s', %s, 1)", param, paramVal);
+        // }
+        // PreparedStatement stmtPost = this.getConnection(sqlPost);
+        // try {
+        //     stmtPost.executeQuery();
+        // } catch (SQLException e) {
+        //     if (!e.getMessage().contains("No results were returned by the query")) {
+        //         throw new SQLException();
+        //     }
+        // }
     }
 
 
     public List<Property> getAllProps() throws SQLException {
-        final String sql = "SELECT * FROM nsw_property_data";
         final List<Property> results = new ArrayList<>();
 
-        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-                PreparedStatement stmt = conn.prepareStatement(sql);
-                ResultSet resSet = stmt.executeQuery()) {
+        try {
+            MongoCollection<Document> collection = this.getCollection();
+            FindIterable<Document> docs = collection.find(Filters.empty());
 
-            while (resSet.next()) {
-                final Property prop = new Property(
-                        resSet.getLong("property_id"),
-                        resSet.getString("download_date"),
-                        resSet.getString("council_name"),
-                        resSet.getLong("purchase_price"),
-                        resSet.getString("address"),
-                        resSet.getLong("post_code"),
-                        resSet.getString("property_type"),
-                        resSet.getString("strata_lot_number"),
-                        resSet.getString("property_name"),
-                        resSet.getDouble("area"),
-                        resSet.getString("area_type"),
-                        resSet.getString("contract_date"),
-                        resSet.getString("settlement_date"),
-                        resSet.getString("zoning"),
-                        resSet.getString("nature_of_property"),
-                        resSet.getString("primary_purpose"),
-                        resSet.getString("legal_description"));
+            for (Document doc : docs) {
+                final Property prop = docToProp(doc);
                 results.add(prop);
             }
         } catch (SQLException e) {
@@ -183,6 +218,28 @@ public class PropertyDAO {
         }
 
         return results;
+    }
+
+    private Property docToProp(Document doc) {
+        final Property prop = new Property(
+            doc.getLong("property_id"),
+            doc.getString("download_date"),
+            doc.getString("council_name"),
+            doc.getLong("purchase_price"),
+            doc.getString("address"),
+            doc.getLong("post_code"),
+            doc.getString("property_type"),
+            doc.getString("strata_lot_number"),
+            doc.getString("property_name"),
+            doc.getDouble("area"),
+            doc.getString("area_type"),
+            doc.getString("contract_date"),
+            doc.getString("settlement_date"),
+            doc.getString("zoning"),
+            doc.getString("nature_of_property"),
+            doc.getString("primary_purpose"),
+            doc.getString("legal_description"));
+        return prop;
     }
 
     public double getAverageOfField(final List<Property> properties, final String param) throws SQLException {
@@ -240,53 +297,51 @@ public class PropertyDAO {
             }
         }
 
-        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        PreparedStatement stmt = this.getConnection(sql);
 
-            // Fill in ? parameters with correct types
-            for (int i = 0; i < paramVals.size(); i++) {
-                final String field = paramKeys.get(i).toLowerCase();
-                final Object paramVal = paramVals.get(i);
+        // Fill in ? parameters with correct types
+        for (int i = 0; i < paramVals.size(); i++) {
+            final String field = paramKeys.get(i).toLowerCase();
+            final Object paramVal = paramVals.get(i);
 
-                switch (field) {
-                    case "property_id":
-                    case "purchase_price":
-                    case "post_code":
-                        stmt.setLong(i + 1, Long.parseLong(paramVal.toString()));
-                        break;
-                    case "area":
-                        stmt.setDouble(i + 1, Double.parseDouble(paramVal.toString()));
-                        break;
-                    default:
-                        stmt.setString(i + 1, paramVal.toString());
-                }
+            switch (field) {
+                case "property_id":
+                case "purchase_price":
+                case "post_code":
+                    stmt.setLong(i + 1, Long.parseLong(paramVal.toString()));
+                    break;
+                case "area":
+                    stmt.setDouble(i + 1, Double.parseDouble(paramVal.toString()));
+                    break;
+                default:
+                    stmt.setString(i + 1, paramVal.toString());
             }
+        }
 
-            try (ResultSet resSet = stmt.executeQuery()) {
-                final List<Property> results = new ArrayList<>();
-                while (resSet.next()) {
-                    final Property prop = new Property(
-                            resSet.getLong("property_id"),
-                            resSet.getString("download_date"),
-                            resSet.getString("council_name"),
-                            resSet.getLong("purchase_price"),
-                            resSet.getString("address"),
-                            resSet.getLong("post_code"),
-                            resSet.getString("property_type"),
-                            resSet.getString("strata_lot_number"),
-                            resSet.getString("property_name"),
-                            resSet.getDouble("area"),
-                            resSet.getString("area_type"),
-                            resSet.getString("contract_date"),
-                            resSet.getString("settlement_date"),
-                            resSet.getString("zoning"),
-                            resSet.getString("nature_of_property"),
-                            resSet.getString("primary_purpose"),
-                            resSet.getString("legal_description"));
-                    results.add(prop);
-                }
-                return results;
+        try (ResultSet resSet = stmt.executeQuery()) {
+            final List<Property> results = new ArrayList<>();
+            while (resSet.next()) {
+                final Property prop = new Property(
+                        resSet.getLong("property_id"),
+                        resSet.getString("download_date"),
+                        resSet.getString("council_name"),
+                        resSet.getLong("purchase_price"),
+                        resSet.getString("address"),
+                        resSet.getLong("post_code"),
+                        resSet.getString("property_type"),
+                        resSet.getString("strata_lot_number"),
+                        resSet.getString("property_name"),
+                        resSet.getDouble("area"),
+                        resSet.getString("area_type"),
+                        resSet.getString("contract_date"),
+                        resSet.getString("settlement_date"),
+                        resSet.getString("zoning"),
+                        resSet.getString("nature_of_property"),
+                        resSet.getString("primary_purpose"),
+                        resSet.getString("legal_description"));
+                results.add(prop);
             }
+            return results;
         }
     }
 
