@@ -9,16 +9,17 @@ import properties.PropertyController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import api.ApiController;
 import io.javalin.openapi.plugin.OpenApiPlugin;
 import io.javalin.openapi.plugin.redoc.ReDocPlugin;
 import io.javalin.openapi.plugin.swagger.SwaggerPlugin;
 
-public class REServer {
-    private static final Logger LOG = LoggerFactory.getLogger(REServer.class);
+public class REApi {
+    private static final Logger LOG = LoggerFactory.getLogger(REAnalytics.class);
 
     public static void main(String[] args) {
         // API implementation
-        PropertyController propertyController = new PropertyController();
+        ApiController apiController = new ApiController();
         // start Javalin on port 7070 d
 
         var app = Javalin.create(config -> {
