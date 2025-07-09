@@ -54,10 +54,6 @@ public class PropertyController {
             final Property prop = ctx.bodyValidator(Property.class).get();
             final boolean success = propertydao.createProp(prop);
 
-            // update access data
-            propertydao.updateAccessData("property_id", prop.getPropertyId().toString());
-            propertydao.updateAccessData("post_code", prop.getPostCode().toString());
-
             if (success) {
                 ctx.result("Property Created");
                 ctx.status(201);

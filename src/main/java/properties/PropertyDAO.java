@@ -123,32 +123,6 @@ public class PropertyDAO {
         return results;
     }
 
-    public void updateAccessData(final String param, final String paramVal) throws SQLException {
-        Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-        String sqlGet = String.format("SELECT * FROM nsw_property_data_access_data WHERE attribute_type = \'%s\' AND value = %s;", param, paramVal);
-        PreparedStatement stmtGet = conn.prepareStatement(sqlGet);
-        final ResultSet resSet = stmtGet.executeQuery();
-
-        String sqlPost = "";
-        int count = 0;
-        while (resSet.next()) {
-            sqlPost = String.format("UPDATE nsw_property_data_access_data SET access_count = %d WHERE attribute_type = '%s' AND value = %s", resSet.getLong("access_count") + 1, param, paramVal);
-            count++;
-        }
-        if (count == 0) {
-            sqlPost = String.format("INSERT INTO nsw_property_data_access_data (attribute_type, value, access_count) VALUES ('%s', %s, 1)", param, paramVal);
-        }
-        PreparedStatement stmtPost = conn.prepareStatement(sqlPost);
-        try {
-            stmtPost.executeQuery();
-        } catch (SQLException e) {
-            if (!e.getMessage().contains("No results were returned by the query")) {
-                throw new SQLException();
-            }
-        }
-    }
-
-
     public List<Property> getAllProps() throws SQLException {
         final String sql = "SELECT * FROM nsw_property_data";
         final List<Property> results = new ArrayList<>();
@@ -289,28 +263,6 @@ public class PropertyDAO {
             }
         }
     }
-
-    // public int getParamAccessCount(String param, String paramVal) throws SQLException, IllegalArgumentException {
-    //     String sql = "SELECT access_count FROM nsw_property_data_access_data";
-    //     // switch (param) {
-    //     //     case "property_id":
-    //     //         sql += "nsw_property_id_access_data";
-    //     //         break;
-    //     //     case "post_code":
-    //     //         sql += "nsw_post_code_access_data";
-    //     //         break;
-    //     //     default:
-    //     //         throw new IllegalArgumentException();
-    //     // }
-
-    //     // sql += String.format(" WHERE %s = %s;", param, paramVal);
-
-    //     // try {
-    //     //     Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-    //     //     PreparedStatement stmt = conn.prepareStatement(sql);
-    //     //     return stmt.executeQuery();
-    //     // } catch (SQLException)
-    // }
 
     private void debug(final String msg) {
         if (logger.isDebugEnabled()) {

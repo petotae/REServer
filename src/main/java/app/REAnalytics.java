@@ -34,7 +34,7 @@ public class REAnalytics {
             config.registerPlugin(new ReDocPlugin());
         });
 
-        propertyController.registerRoutes(app);
+        analyticsController.registerRoutes(app);
         app.start(7002);
 
         System.out.println("Check out ReDoc docs at http://localhost:7002/redoc");

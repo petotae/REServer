@@ -14,12 +14,12 @@ import io.javalin.openapi.plugin.OpenApiPlugin;
 import io.javalin.openapi.plugin.redoc.ReDocPlugin;
 import io.javalin.openapi.plugin.swagger.SwaggerPlugin;
 
-public class REApi {
+public class APIGateway {
     private static final Logger LOG = LoggerFactory.getLogger(REAnalytics.class);
 
     public static void main(String[] args) {
         // API implementation
-        ApiController apiController = new ApiController();
+        // ApiController apiController = new ApiController();
         // start Javalin on port 7070 d
 
         var app = Javalin.create(config -> {
@@ -34,7 +34,7 @@ public class REApi {
             config.registerPlugin(new ReDocPlugin());
         });
 
-        propertyController.registerRoutes(app);
+        // apiController.registerRoutes(app);
         app.start(7002);
 
         System.out.println("Check out ReDoc docs at http://localhost:7002/redoc");
