@@ -1,44 +1,160 @@
 package app;
 
 import io.javalin.Javalin;
-import properties.PropertyController;
-
-/**
- * Main class to start the Real Estate server.
- */
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import api.ApiController;
-import io.javalin.openapi.plugin.OpenApiPlugin;
-import io.javalin.openapi.plugin.redoc.ReDocPlugin;
-import io.javalin.openapi.plugin.swagger.SwaggerPlugin;
+import java.net.http.*;
+import java.net.URI;
+import java.util.*;
 
 public class APIGateway {
-    private static final Logger LOG = LoggerFactory.getLogger(REAnalytics.class);
-
     public static void main(String[] args) {
-        // API implementation
-        // ApiController apiController = new ApiController();
-        // start Javalin on port 7070 d
+        Javalin app = Javalin.create().start(7070);
+        final String PROPERTY_SERVER_URL = "http://localhost:7001/properties";
+        final String ANALYTICS_SERVER_URL = "http://localhost:7002/analytics";
+        final HttpClient httpClient = HttpClient.newHttpClient();
 
-        var app = Javalin.create(config -> {
-
-            config.registerPlugin(new OpenApiPlugin(pluginConfig -> {
-                pluginConfig.withDefinitionConfiguration((version, definition) -> {
-                    definition.withOpenApiInfo(info -> info.setTitle("Javalin OpenAPI example"));
-                });
-            }));
-
-            config.registerPlugin(new SwaggerPlugin());
-            config.registerPlugin(new ReDocPlugin());
+        app.post("/createProperty", ctx -> {
+            HttpRequest req = HttpRequest.newBuilder()
+                    .uri(URI.create(PROPERTY_SERVER_URL + "/createProperty"))
+                    .GET()
+                    .build();
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            ctx.status(resp.statusCode()).result(resp.body());
         });
 
-        // apiController.registerRoutes(app);
-        app.start(7002);
+        app.get("/getProperties/{param}/{paramVal}", ctx -> {
+            String param = ctx.pathParam("param");
+            String paramVal = ctx.pathParam("paramVal");
 
-        System.out.println("Check out ReDoc docs at http://localhost:7002/redoc");
-        System.out.println("Check out Swagger UI docs at http://localhost:7002/swagger-ui");
+            String targetUrl = PROPERTY_SERVER_URL + "/getProperties/" + param + "/" + paramVal;
+
+            HttpRequest req = HttpRequest.newBuilder()
+                    .uri(URI.create(targetUrl))
+                    .GET()
+                    .build();
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            ctx.status(resp.statusCode()).result(resp.body());
+
+            if (resp.statusCode() == 200 && (param.equals("property_id") || param.equals("post_code"))) {
+                String analyticsUrl = ANALYTICS_SERVER_URL + "/updateAccessData/" + param + "/" + paramVal;
+                HttpRequest analyticsReq = HttpRequest.newBuilder()
+                        .uri(URI.create(analyticsUrl))
+                        .POST(HttpRequest.BodyPublishers.ofString(""))
+                        .build();
+                HttpResponse<String> analyticsResp = httpClient.send(analyticsReq,
+                        HttpResponse.BodyHandlers.ofString());
+                ctx.status(analyticsResp.statusCode()).result(resp.body());
+            }
+        });
+
+        app.get("/getAllProperties", ctx -> {
+            HttpRequest req = HttpRequest.newBuilder()
+                    .uri(URI.create(PROPERTY_SERVER_URL + "/getAllProperties"))
+                    .GET()
+                    .build();
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            ctx.status(resp.statusCode()).result(resp.body());
+        });
+
+        app.get("/getPropertiesByParams", ctx -> {
+            var paramsMap = ctx.queryParamMap();
+
+            String queryString = ctx.queryString();
+            String targetUrl = PROPERTY_SERVER_URL + "/getPropertiesByParams"
+                    + (queryString != null ? "?" + queryString : "");
+
+            HttpRequest req = HttpRequest.newBuilder()
+                    .uri(URI.create(targetUrl))
+                    .GET()
+                    .build();
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            ctx.status(resp.statusCode()).result(resp.body());
+
+            // update analytics
+            if (resp.statusCode() == 200) {
+                if (paramsMap.containsKey("property_id")) {
+                    Set<String> uniquePropertyIds = new HashSet<>(paramsMap.get("property_id"));
+                    for (String propertyId : uniquePropertyIds) {
+                        String analyticsUrl = ANALYTICS_SERVER_URL + "/updateAccessData/property_id/" + propertyId;
+                        HttpRequest analyticsReq = HttpRequest.newBuilder()
+                                .uri(URI.create(analyticsUrl))
+                                .POST(HttpRequest.BodyPublishers.ofString(""))
+                                .build();
+                        HttpResponse<String> analyticsResp = httpClient.send(analyticsReq,
+                                HttpResponse.BodyHandlers.ofString());
+                        ctx.status(analyticsResp.statusCode()).result(resp.body());
+                    }
+                }
+                if (paramsMap.containsKey("post_code")) {
+                    Set<String> uniquePostCodes = new HashSet<>(paramsMap.get("post_code"));
+                    for (String postCode : uniquePostCodes) {
+                        String analyticsUrl = ANALYTICS_SERVER_URL + "/updateAccessData/post_code/" + postCode;
+                        HttpRequest analyticsReq = HttpRequest.newBuilder()
+                                .uri(URI.create(analyticsUrl))
+                                .POST(HttpRequest.BodyPublishers.ofString(""))
+                                .build();
+                        HttpResponse<String> analyticsResp = httpClient.send(analyticsReq,
+                                HttpResponse.BodyHandlers.ofString());
+                        ctx.status(analyticsResp.statusCode()).result(resp.body());
+                    }
+                }
+            }
+        });
+
+        app.get("/getPropertiesGreaterThan/{param}/{paramVal}", ctx -> {
+            String param = ctx.pathParam("param");
+            String paramVal = ctx.pathParam("paramVal");
+
+            String targetUrl = PROPERTY_SERVER_URL + "/getPropertiesGreaterThan/" + param + "/" + paramVal;
+
+            HttpRequest req = HttpRequest.newBuilder()
+                    .uri(URI.create(targetUrl))
+                    .GET()
+                    .build();
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            ctx.status(resp.statusCode()).result(resp.body());
+        });
+
+        app.get("/getPropertiesLessThan/{param}/{paramVal}", ctx -> {
+            String param = ctx.pathParam("param");
+            String paramVal = ctx.pathParam("paramVal");
+
+            String targetUrl = PROPERTY_SERVER_URL + "/getPropertiesLessThan/" + param + "/" + paramVal;
+
+            HttpRequest req = HttpRequest.newBuilder()
+                    .uri(URI.create(targetUrl))
+                    .GET()
+                    .build();
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            ctx.status(resp.statusCode()).result(resp.body());
+        });
+
+        app.get("/getAveragePurchasePrice/{param}/{paramval}", ctx -> {
+            String param = ctx.pathParam("param");
+            String paramVal = ctx.pathParam("paramVal");
+
+            String targetUrl = PROPERTY_SERVER_URL + "/getAveragePurchasePrice/" + param + "/" + paramVal;
+
+            HttpRequest req = HttpRequest.newBuilder()
+                    .uri(URI.create(targetUrl))
+                    .GET()
+                    .build();
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            ctx.status(resp.statusCode()).result(resp.body());
+        });
+
+        app.get("/getAccessData/{param}/{paramVal}", ctx -> {
+            String param = ctx.pathParam("param");
+            String paramVal = ctx.pathParam("paramVal");
+
+            String targetUrl = ANALYTICS_SERVER_URL + "/getAccessData/" + param + "/" + paramVal;
+
+            HttpRequest req = HttpRequest.newBuilder()
+                    .uri(URI.create(targetUrl))
+                    .GET()
+                    .build();
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            ctx.status(resp.statusCode()).result(resp.body());
+        });
 
     }
 }

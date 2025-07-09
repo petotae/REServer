@@ -34,10 +34,10 @@ public class REProperties {
         });
 
         propertyController.registerRoutes(app);
-        app.start(7002);
+        app.start(7001);
 
-        System.out.println("Check out ReDoc docs at http://localhost:7002/redoc");
-        System.out.println("Check out Swagger UI docs at http://localhost:7002/swagger-ui");
+        System.out.println("Check out ReDoc docs at http://localhost:7001/redoc");
+        System.out.println("Check out Swagger UI docs at http://localhost:7001/swagger-ui");
 
     }
 }

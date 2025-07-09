@@ -2,12 +2,10 @@ package properties;
 
 import properties.util.CaseConverter;
 import properties.util.ErrorResponse;
-import properties.util.CaseConverter;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -27,13 +25,13 @@ public class PropertyController {
      * @param app The current Javalin app
      */
     public void registerRoutes(final Javalin app) {
-        app.post("/createProperty", this::createProperty);
-        app.get("/getProperties/{param}/{paramVal}", this::findPropertyByParam);
-        app.get("/getAllProperties", this::getAllProperties);
-        app.get("/getPropertiesByParams", this::getPropertiesByParams);
-        app.get("/getPropertiesGreaterThan/{param}/{paramVal}", this::findPropertiesGreaterThan);
-        app.get("/getPropertiesLessThan/{param}/{paramVal}", this::findPropertiesLessThan);
-        app.get("/getAveragePurchasePrice/{param}/{paramval}", this::getAvgPurchasePrice);
+        app.post("/properties/createProperty", this::createProperty);
+        app.get("/properties/getProperties/{param}/{paramVal}", this::findPropertyByParam);
+        app.get("/properties/getAllProperties", this::getAllProperties);
+        app.get("/properties/getPropertiesByParams", this::getPropertiesByParams);
+        app.get("/properties/getPropertiesGreaterThan/{param}/{paramVal}", this::findPropertiesGreaterThan);
+        app.get("/properties/getPropertiesLessThan/{param}/{paramVal}", this::findPropertiesLessThan);
+        app.get("/properties/getAveragePurchasePrice/{param}/{paramval}", this::getAvgPurchasePrice);
     }
 
     /**
@@ -86,11 +84,6 @@ public class PropertyController {
 
             final List<Property> properties = propertydao.getPropByParam(param, paramVal);
 
-            // update access data
-            if (param.equals("property_id") || param.equals("post_code")) {
-                propertydao.updateAccessData(param, paramVal);
-            }
-
             this.addResponseToContext(ctx, properties, properties, "No properties for " +
                     param + " with {" + paramVal + "} found");
         } catch (SQLException e) {
@@ -136,24 +129,6 @@ public class PropertyController {
             var paramsMap = ctx.queryParamMap();
 
             List<Property> properties = propertydao.getPropByParams(paramsMap);
-
-            // update access data
-            if (paramsMap.containsKey("property_id") && paramsMap.containsKey("post_code")) {
-                for (Property property : properties) {
-                    String prop_val = property.get("property_id").toString();
-                    propertydao.updateAccessData("property_id", prop_val);
-                    String post_val = property.get("post_code").toString();
-                    propertydao.updateAccessData("post_code", post_val);
-                }
-            } else if (paramsMap.containsKey("property_id")) {
-                for (Property property : properties) {
-                    propertydao.updateAccessData("property_id", property.getPropertyId().toString());
-                }
-            } else if (paramsMap.containsKey("post_code")) {
-                for (Property property : properties) {
-                    propertydao.updateAccessData("post_code", property.getPostCode().toString());
-                }
-            }
 
             if (properties.isEmpty()) {
                 ctx.result("No properties with given query vals found");
