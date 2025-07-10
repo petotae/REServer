@@ -43,7 +43,6 @@ public class AnalyticsController {
    * @param app The current Javalin app
    */
   public void registerRoutes(final Javalin app) {
-    app.post("/analytics/updateAccessData/{param}/{paramVal}", this::updateAccessData);
     app.get("/analytics/getAccessData/{param}/{paramVal}", this::getAccessData);
   }
 

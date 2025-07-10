@@ -3,7 +3,6 @@ package app;
 import io.javalin.Javalin;
 import java.net.http.*;
 import java.net.URI;
-import java.util.*;
 
 public class APIGateway {
     public static void main(String[] args) {
@@ -33,17 +32,6 @@ public class APIGateway {
                     .build();
             HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
             ctx.status(resp.statusCode()).result(resp.body());
-
-            if (resp.statusCode() == 200 && (param.equals("property_id") || param.equals("post_code"))) {
-                String analyticsUrl = ANALYTICS_SERVER_URL + "/updateAccessData/" + param + "/" + paramVal;
-                HttpRequest analyticsReq = HttpRequest.newBuilder()
-                        .uri(URI.create(analyticsUrl))
-                        .POST(HttpRequest.BodyPublishers.ofString(""))
-                        .build();
-                HttpResponse<String> analyticsResp = httpClient.send(analyticsReq,
-                        HttpResponse.BodyHandlers.ofString());
-                ctx.status(analyticsResp.statusCode()).result(resp.body());
-            }
         });
 
         app.get("/getAllProperties", ctx -> {
@@ -56,8 +44,6 @@ public class APIGateway {
         });
 
         app.get("/getPropertiesByParams", ctx -> {
-            var paramsMap = ctx.queryParamMap();
-
             String queryString = ctx.queryString();
             String targetUrl = PROPERTY_SERVER_URL + "/getPropertiesByParams"
                     + (queryString != null ? "?" + queryString : "");
@@ -68,36 +54,6 @@ public class APIGateway {
                     .build();
             HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
             ctx.status(resp.statusCode()).result(resp.body());
-
-            // update analytics
-            if (resp.statusCode() == 200) {
-                if (paramsMap.containsKey("property_id")) {
-                    Set<String> uniquePropertyIds = new HashSet<>(paramsMap.get("property_id"));
-                    for (String propertyId : uniquePropertyIds) {
-                        String analyticsUrl = ANALYTICS_SERVER_URL + "/updateAccessData/property_id/" + propertyId;
-                        HttpRequest analyticsReq = HttpRequest.newBuilder()
-                                .uri(URI.create(analyticsUrl))
-                                .POST(HttpRequest.BodyPublishers.ofString(""))
-                                .build();
-                        HttpResponse<String> analyticsResp = httpClient.send(analyticsReq,
-                                HttpResponse.BodyHandlers.ofString());
-                        ctx.status(analyticsResp.statusCode()).result(resp.body());
-                    }
-                }
-                if (paramsMap.containsKey("post_code")) {
-                    Set<String> uniquePostCodes = new HashSet<>(paramsMap.get("post_code"));
-                    for (String postCode : uniquePostCodes) {
-                        String analyticsUrl = ANALYTICS_SERVER_URL + "/updateAccessData/post_code/" + postCode;
-                        HttpRequest analyticsReq = HttpRequest.newBuilder()
-                                .uri(URI.create(analyticsUrl))
-                                .POST(HttpRequest.BodyPublishers.ofString(""))
-                                .build();
-                        HttpResponse<String> analyticsResp = httpClient.send(analyticsReq,
-                                HttpResponse.BodyHandlers.ofString());
-                        ctx.status(analyticsResp.statusCode()).result(resp.body());
-                    }
-                }
-            }
         });
 
         app.get("/getPropertiesGreaterThan/{param}/{paramVal}", ctx -> {
