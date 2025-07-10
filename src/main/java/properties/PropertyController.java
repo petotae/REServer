@@ -12,12 +12,35 @@ import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.openapi.*;
 
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 /**
  * Controller to create properties and get information about properties in the
  * database
  */
 public class PropertyController {
     private final PropertyDAO propertydao = new PropertyDAO();
+    private final String QUEUE_NAME = "hello";
+
+    public PropertyController() {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        factory.setPort(5672);
+        try (Connection connection = factory.newConnection();
+                Channel channel = connection.createChannel()) {
+            channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+            String message = "Hello World!";
+            channel.basicPublish("", QUEUE_NAME, null, message.getBytes(StandardCharsets.UTF_8));
+            System.out.println(" [x] Sent '" + message + "'");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     /**
      * Set the endpoints to post data to the database or get data from the database
